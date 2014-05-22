@@ -1,37 +1,317 @@
-body {
-    padding-top: 60px;
-    padding-bottom: 40px;
-}
+/* ===================================================== */
+/*                  	 Imports                         */
+/* ===================================================== */
+    @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro);
+    @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+    @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:700);
+    @import url(http://fonts.googleapis.com/css?family=Gafata);
 
-.zf-green {
-    color: #68b604;
-}
+/* ===================================================== */
+/*                  	 Style Reset                     */
+/* ===================================================== */
 
-.btn-success {
-  background-color: #57a900;
-  background-image: -moz-linear-gradient(top, #70d900, #57a900);
-  background-image: -ms-linear-gradient(top, #70d900, #57a900);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70d900), to(#57a900));
-  background-image: -webkit-linear-gradient(top, #70d900, #57a900);
-  background-image: -o-linear-gradient(top, #70d900, #57a900);
-  background-image: linear-gradient(top, #70d900, #57a900);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70d900', endColorstr='#57a900', GradientType=0);
-}
+    html, body, div, span, applet, object, iframe,
+    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+    a, abbr, acronym, address, big, cite, code,
+    del, dfn, em, img, ins, kbd, q, s, samp,
+    small, strike, strong, sub, sup, tt, var,
+    b, u, i, center,
+    dl, dt, dd, ol, ul, li,
+    fieldset, form, label, legend,
+    table, caption, tbody, tfoot, thead, tr, th, td,
+    article, aside, canvas, details, embed,
+    figure, figcaption, footer, header, hgroup,
+    menu, nav, output, ruby, section, summary,
+    time, mark, audio, video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+    }
+    /* HTML5 display-role reset for older browsers */
+    article, aside, details, figcaption, figure,
+    footer, header, hgroup, menu, nav, section {
+        display: block;
+    }
 
-.btn-success:hover,
-.btn-success:active,
-.btn-success.active,
-.btn-success.disabled,
-.btn-success[disabled] {
-  background-color: #57a900;
-}
+    ol, ul {
+        list-style: none;
+    }
+    blockquote, q {
+        quotes: none;
+    }
+    blockquote:before, blockquote:after,
+    q:before, q:after {
+        content: '';
+        content: none;
+    }
 
-.btn-success:active, .btn-success.active {
-  background-color: #57a900;
-}
+    table {
+        width:100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
 
-div.container a.brand {
-    background: url("../img/zf2-logo.png") no-repeat scroll 0 10px transparent;
-    margin-left: 0;
-    padding: 8px 20px 12px 40px;
-}
+    textarea{
+        vertical-align: middle;
+        resize:vertical;
+    }
+
+/* ===================================================== */
+/*                 Standard Html Tags                    */
+/* ===================================================== */
+
+    body {
+        font-family:  'Source Sans Pro', sans-serif;
+        color: black;
+        font-size: 12px;
+        line-height:1;
+    }
+    h1, h2, h3{margin: 5px 0; text-align:center; font-size:1.15em;}
+
+    h1 {color: black; border-bottom: 1px solid #797979;}
+    h2 {color: black;}
+    h3 {
+        font:bold 14px Arial;
+        border-bottom: 1px solid #444;
+        padding-bottom: 10px;
+        color: #fff;
+    }
+
+    a, .link {color: #336699; text-decoration: none;}
+
+
+/* ===================================================== */
+/*                       Header                          */
+/* ===================================================== */
+    header{
+        height:40px;
+        text-align: left;
+        position: fixed;
+        width: 100%;
+        border-bottom:1px solid #aaa;
+        background: #E0E0E3 url(../images/sidebar.png) repeat;
+    }
+
+    nav ul{
+        display:inline-block;
+        text-align:center;
+        border-left: 1px solid #fafafa;
+        border-right: 1px solid #bbb;
+    }
+
+    nav ul li{
+        float: left;
+        border-left: 1px solid #bbb;
+        border-right: 1px solid #fafafa;
+        position: relative;
+    }
+
+    nav ul li a{
+        padding: 14px;
+        display: inline-block;
+        color: #333;
+        font-weight: 700;
+        vertical-align: middle;
+    }
+
+    nav ul li:hover{
+        background: rgba(150,150,150,0.2);
+    }
+
+    nav ul li a:hover{
+        text-decoration: none;
+    }
+
+/* ===================================================== */
+/*                  Application Layout                   */
+/* ===================================================== */
+
+    #flash {
+        position: absolute;
+        top: 47px;
+        width: 960px;
+        left: 50%;
+        margin-left: -490px;
+        font-weight: bold;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #bbb;
+        text-align: center;
+        background: url(../images/flash-bg.png) 50% 50%;
+        color: #333;
+    }
+
+
+    #content{
+        padding-top: 42px;
+        min-height:400px;
+    }
+
+    caption, h2{
+        padding: 10px;
+        border-top: 1px solid #aaa;
+        background: #ddd;
+        text-align: left;
+    }
+
+    th{
+        vertical-align: middle;
+        padding:10px;
+        border-right:1px solid #999;
+        border-left:1px solid #bbb;
+    }
+
+    td{
+        vertical-align: middle;
+        padding:10px;
+        border-right:1px solid #ccc;
+        border-bottom:1px solid #ccc;
+        cursor:pointer;
+        text-align: center;
+    }
+
+    td:hover{
+        background:#fafafa;
+    }
+
+    td.activeTd{
+        background:yellow;
+        cursor:default;
+    }
+
+    td.activeTd:hover{
+        background:yellow;
+    }
+
+    thead th{
+        border-bottom: 1px solid #999;
+        border-top: 1px solid #999;
+        /*background: #F1F1F4 url(../images/secondary_bar.png) repeat-x;*/
+        background: -moz-linear-gradient(top, rgba(250,250,250,0.4) 0%, rgba(200,200,200,0.4) 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(250,250,250,0.4)), color-stop(100%,rgba(200,200,200,0.4)));
+        background: -webkit-linear-gradient(top, rgba(250,250,250,0.4) 0%,rgba(200,200,200,0.4) 100%);
+        background: -o-linear-gradient(top, rgba(250,250,250,0.4) 0%,rgba(200,200,200,0.4) 100%);
+        background: -ms-linear-gradient(top, rgba(250,250,250,0.4) 0%,rgba(200,200,200,0.4) 100%);
+        background: linear-gradient(to bottom, rgba(250,250,250,0.4) 0%,rgba(200,200,200,0.4) 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#111', endColorstr='#0f0f0f',GradientType=0 );
+    }
+
+    #editPanel{
+        display:none;
+        position:absolute;
+        background: white;
+        width: 245px;
+        border: 1px solid #aaa;
+        text-align: center;
+        padding-top:10px;
+    }
+
+    #editPanel span{
+        display:block;
+        margin-top:10px;
+        padding: 7px;
+        border-top: 1px solid #bbb;
+        cursor: pointer;
+        background: -moz-linear-gradient(top, rgba(200,200,200,0.4) 0%, rgba(150,150,150,0.4) 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(200,200,200,0.4)), color-stop(100%,rgba(150,150,150,0.4))); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top, rgba(200,200,200,0.4) 0%,rgba(150,150,150,0.4) 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top, rgba(200,200,200,0.4) 0%,rgba(150,150,150,0.4) 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top, rgba(200,200,200,0.4) 0%,rgba(150,150,150,0.4) 100%); /* IE10+ */
+        background: linear-gradient(to bottom, rgba(200,200,200,0.4) 0%,rgba(150,150,150,0.4) 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#111', endColorstr='#0f0f0f',GradientType=0 ); /* IE6-9 */
+    }
+
+    #editPanel span:hover{
+        background:#eee;
+    }
+
+    #editPanel input{
+        padding: 5px 0;
+    }
+
+    #optionPanel{
+        text-align: right;
+    }
+
+    #optionPanel span{
+        display: inline-block;
+        padding: 10px 20px;
+        background: #F1F1F4 url(../images/secondary_bar.png) repeat-x;
+        margin: 5px 1px;
+        cursor:pointer;
+        border: 1px solid #999;
+    }
+
+    #optionPanel span:hover{
+        background: #F1F1F4 url(../images/secondary_bar-hover.png) repeat-x;
+    }
+
+    /* ===================================================== */
+    /*                     Workers Page                      */
+
+        #addWorkers, #addEntry, #addException{
+            margin-bottom:15px;
+        }
+
+        .standardForm input, .standardForm textarea, .standardForm select{
+            width:100%;
+        }
+
+        .standardForm td{
+            cursor:default;
+        }
+
+        .standardForm tr:last-child td{
+            border-bottom:1px solid #aaa;
+        }
+
+        .standardForm .element{
+            margin-top:20px;
+        }
+
+        .standardForm .element:first-of-type{
+            margin-top:5px;
+        }
+
+    /* ===================================================== */
+    /*                     Schedule Page                     */
+
+        #calendar{
+            margin: 20px auto;
+            padding: 10px;
+            width: 210px;
+        }
+
+        #dateRange h2{
+            border-bottom: 1px solid #aaa;
+            margin-bottom: 20px;
+        }
+
+        #dateRange{
+            text-align:center;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #aaa;
+        }
+
+        #dateRange span{
+            margin-left:10px;
+        }
+
+/* ===================================================== */
+/*                    Common Classes                     */
+
+    .invisible{display:none;}
+    .button{
+        padding: 8px 20px;
+        background: #F1F1F4 url(../images/secondary_bar.png) repeat-x;
+        cursor: pointer;
+        border: 1px solid #999;
+    }
+
+    .button:hover{
+        background: #F1F1F4 url(../images/secondary_bar-hover.png) repeat-x;
+    }

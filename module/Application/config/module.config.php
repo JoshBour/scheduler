@@ -1,13 +1,20 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
+namespace Application;
 
 return array(
+    'doctrine' => array(
+        'driver' => array(
+            'entity' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity'),
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    __NAMESPACE__ . '\Entity' => 'entity',
+                ),
+            ),
+        ),
+    ),
     'router' => array(
         'routes' => array(
             'home' => array(
@@ -15,18 +22,8 @@ return array(
                 'options' => array(
                     'route'    => '/',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\Index',
+                        'controller' => __NAMESPACE__ . '\Controller\Index',
                         'action'     => 'index',
-                    ),
-                ),
-            ),
-			'test' => array(
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
-                    'route'    => '/test',
-                    'defaults' => array(
-                        'controller' => 'Application\Controller\Index',
-                        'action'     => 'test',
                     ),
                 ),
             ),
@@ -51,6 +48,11 @@ return array(
             ),
         ),
     ),
+    'view_helpers' => array(
+        'invokables' => array(
+            'mobile' => 'Application\View\Helper\Mobile',
+        )
+    ),
     'controllers' => array(
         'invokables' => array(
             'Application\Controller\Index' => 'Application\Controller\IndexController'
@@ -67,16 +69,14 @@ return array(
             'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
             'error/404'               => __DIR__ . '/../view/error/404.phtml',
             'error/index'             => __DIR__ . '/../view/error/index.phtml',
+            'header'                  => __DIR__ . '/../view/partial/header.phtml',
+            'footer'                  => __DIR__ . '/../view/partial/footer.phtml',
         ),
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
-    ),
-    // Placeholder for console routes
-    'console' => array(
-        'router' => array(
-            'routes' => array(
-            ),
+        'strategies' => array(
+            'ViewJsonStrategy'
         ),
     ),
 );

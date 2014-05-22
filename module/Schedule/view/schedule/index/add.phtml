@@ -1,0 +1,65 @@
+<?php
+$form->prepare();
+$form->setAttribute('action', $this->url('schedule_add'));
+$fieldset = $form->get('entry');
+echo $this->form()->openTag($form);
+echo $this->formHidden($form->get('security'));
+?>
+<table>
+    <caption>Add a New Entry</caption>
+    <thead>
+    <tr>
+        <th>Worker*</th>
+        <th>Exception</th>
+        <th>Start Time*</th>
+        <th>End Time*</th>
+        <th>Total Time*</th>
+        <th>Extra Time</th>
+        <th>Add</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <?php
+            echo $this->formSelect($fieldset->get('worker'));
+            echo $this->formElementErrors($fieldset->get('worker'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formSelect($fieldset->get('exception'));
+            echo $this->formElementErrors($fieldset->get('exception'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('startTime'));
+            echo $this->formElementErrors($fieldset->get('startTime'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('endTime'));
+            echo $this->formElementErrors($fieldset->get('endTime'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('totalTime'));
+            echo $this->formElementErrors($fieldset->get('totalTime'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('extraTime'));
+            echo $this->formElementErrors($fieldset->get('extraTime'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php echo $this->formSubmit($form->get('submit')->setValue($this->translate('Add'))); ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<?php echo $this->form()->closeTag() ?>

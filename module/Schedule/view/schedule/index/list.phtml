@@ -1,0 +1,187 @@
+<div id="optionPanel">
+    <span id="dateRangeToggle">
+        Select Date Range
+    </span>
+    <span id="addEntryToggle">
+        + Add New Entry
+    </span>
+    <span id="saveChanges">
+        Save
+    </span>
+    <span id="resetChanges">
+        Reset
+    </span>
+</div>
+<div id="dateRange" class="invisible">
+    <h2>Select a Date Range</h2>
+    <span>From</span>
+    <input type="text" id="dateRangeStart"/>
+    <span>To</span>
+    <input type="text" id="dateRangeEnd"/>
+    <span class="button">Show</span>
+</div>
+<div id="addEntry"<?php echo $hideForm ? ' class="invisible"' : ''; ?>>
+    <?php
+    $form->prepare();
+    $form->setAttribute('action', $this->url('schedule_add'));
+    $fieldset = $form->get('entry');
+    echo $this->form()->openTag($form);
+    echo $this->formHidden($form->get('security'));
+    echo $this->formHidden($fieldset->get('entryId'));
+    ?>
+    <table>
+        <caption>Add a New Entry</caption>
+        <thead>
+        <tr>
+            <th>Worker*</th>
+            <th>Exception</th>
+            <th>Start Time*</th>
+            <th>End Time*</th>
+            <th>Total Time*</th>
+            <th>Extra Time</th>
+            <th>Add</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <?php
+                echo $this->formSelect($fieldset->get('worker'));
+                echo $this->formElementErrors($fieldset->get('worker'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formSelect($fieldset->get('exception'));
+                echo $this->formElementErrors($fieldset->get('exception'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('startTime'));
+                echo $this->formElementErrors($fieldset->get('startTime'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('endTime'));
+                echo $this->formElementErrors($fieldset->get('endTime'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('totalTime'));
+                echo $this->formElementErrors($fieldset->get('totalTime'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('extraTime'));
+                echo $this->formElementErrors($fieldset->get('extraTime'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php echo $this->formSubmit($form->get('submit')->setValue($this->translate('Add'))); ?>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <?php echo $this->form()->closeTag() ?>
+</div>
+<table id="scheduleTable">
+    <caption>Schedule from <?php echo $startDate->format('l, j F Y'); ?>
+        to <?php echo $endDate->format('l, j F Y'); ?></caption>
+    <thead>
+    <tr>
+        <th>Workers - Days</th>
+        <?php
+        do {
+            $interval = $startDate->diff($endDate);
+            echo "<th>" . $startDate->format('D j/m') . "</th>";
+            $startDate->modify('+1 day');
+        } while ($interval->days != 0);
+
+        ?>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($dates as $worker => $dates): ?>
+        <tr>
+            <td><?php echo $worker; ?></td>
+            <?php foreach ($dates as $date => $entry): ?>
+                <?php if (!empty($entry)): ?>
+                    <td>
+                        <span class="invisible entryId"><?php echo $entry->getEntryId(); ?></span>
+                        <span class="invisible worker"><?php echo $entry->getWorker()->getSurname(); ?></span>
+                        <span class="invisible exception"></span>
+                        <span class="invisible startDate"><?php echo $entry->getStartTime()->format('d-m-Y'); ?></span>
+                        <span class="invisible startTime"><?php echo $entry->getStartTime()->format('H:i'); ?></span>
+                        <span class="invisible endDate"><?php echo $entry->getEndTime()->format('d-m-Y'); ?></span>
+                        <span class="invisible endTime"><?php echo $entry->getEndTime()->format('H:i'); ?></span>
+                        <span class="invisible totalTime"><?php echo $entry->getTotalTime(); ?></span>
+                        <span class="invisible extraTime"><?php echo $entry->getExtraTime(); ?></span>
+                        <span class="entryValue">
+                        <?php
+                        if ($entry->getException() === null) {
+                            echo $entry->getStartTime()->format('H:i') . ' - ' . $entry->getEndTime()->format('H:i');
+                        } else {
+                            echo $entry->getException()->getName();
+                        }
+                        ?>
+                        </span>
+                    </td>
+                <?php else: ?>
+                    <td></td>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+<div id="editPanel">
+    <?php
+    $form->prepare();
+    $form->setAttribute('action', $this->url('schedule_save'));
+    $fieldset = $form->get('entry');
+    echo $this->form()->openTag($form);
+    echo $this->formHidden($fieldset->get('entryId'));
+    ?>
+    <div class="element">
+        <?php
+        echo $this->formLabel($fieldset->get('exception'));
+        echo $this->formSelect($fieldset->get('exception'));
+        echo $this->formElementErrors($fieldset->get('exception'), array('class' => 'formError'));
+        ?>
+    </div>
+    <div class="element">
+        <?php
+        echo $this->formLabel($fieldset->get('startTime'));
+        echo $this->formInput($fieldset->get('startTime'));
+        echo $this->formElementErrors($fieldset->get('startTime'), array('class' => 'formError'));
+        ?>
+    </div>
+    <div class="element">
+        <?php
+        echo $this->formLabel($fieldset->get('endTime'));
+        echo $this->formInput($fieldset->get('endTime'));
+        echo $this->formElementErrors($fieldset->get('endTime'), array('class' => 'formError'));
+        ?>
+    </div>
+    <div class="element">
+        <?php
+        echo $this->formLabel($fieldset->get('totalTime'));
+        echo $this->formInput($fieldset->get('totalTime'));
+        echo $this->formElementErrors($fieldset->get('totalTime'), array('class' => 'formError'));
+        ?>
+    </div>
+    <div class="element">
+        <?php
+        echo $this->formLabel($fieldset->get('extraTime'));
+        echo $this->formInput($fieldset->get('extraTime'));
+        echo $this->formElementErrors($fieldset->get('extraTime'), array('class' => 'formError'));
+        ?>
+    </div>
+    <?php
+    echo $this->form()->closeTag() ?>
+    <span id="formEditDone">Done</span>
+</div>

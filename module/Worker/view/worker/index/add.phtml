@@ -1,0 +1,114 @@
+<?php
+$form->prepare();
+$form->setAttribute('action', $this->url('workers/add'));
+$fieldset = $form->get('worker');
+echo $this->form()->openTag($form);
+echo $this->formHidden($form->get('security'));
+?>
+<table>
+    <caption>Add a New Worker</caption>
+    <thead>
+    <tr>
+        <th>Name*</th>
+        <th>Surname*</th>
+        <th>Username*</th>
+        <th>Password*</th>
+        <th>Email</th>
+        <th>Position</th>
+        <th>Address</th>
+        <th>First Telephone</th>
+        <th>Second Telephone</th>
+        <th>Hire Date</th>
+        <th>Work Hours</th>
+        <th>Salary</th>
+        <th>Notes</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('name'));
+            echo $this->formElementErrors($fieldset->get('name'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('surname'));
+            echo $this->formElementErrors($fieldset->get('surname'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('username'));
+            echo $this->formElementErrors($fieldset->get('username'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('password'));
+            echo $this->formElementErrors($fieldset->get('password'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('email'));
+            echo $this->formElementErrors($fieldset->get('email'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('position'));
+            echo $this->formElementErrors($fieldset->get('position'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('address'));
+            echo $this->formElementErrors($fieldset->get('address'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('firstTelephone'));
+            echo $this->formElementErrors($fieldset->get('firstTelephone'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('secondTelephone'));
+            echo $this->formElementErrors($fieldset->get('secondTelephone'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('hireDate'), array('class','formDate'));
+            echo $this->formElementErrors($fieldset->get('hireDate'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('workHours'));
+            echo $this->formElementErrors($fieldset->get('workHours'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('salary'));
+            echo $this->formElementErrors($fieldset->get('salary'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formTextarea($fieldset->get('notes'));
+            echo $this->formElementErrors($fieldset->get('notes'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php echo $this->formSubmit($form->get('submit')->setValue($this->translate('Add'))); ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<?php echo $this->form()->closeTag() ?>

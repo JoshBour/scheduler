@@ -1,0 +1,173 @@
+<div id="optionPanel">
+    <span id="addWorkerToggle">
+        + Add Worker
+    </span>
+    <span id="saveChanges">
+        Save
+    </span>
+    <span id="resetChanges">
+        Reset
+    </span>
+</div>
+<div id="addWorkers"<?php echo $hideForm ? ' class="invisible"':'';?>>
+    <?php
+    $form->prepare();
+    $form->setAttribute('action', $this->url('workers/add'));
+    $fieldset = $form->get('worker');
+    echo $this->form()->openTag($form);
+    echo $this->formHidden($form->get('security'));
+    ?>
+    <table>
+        <caption>Add a New Worker</caption>
+        <thead>
+        <tr>
+            <th>Name*</th>
+            <th>Surname*</th>
+            <th>Username*</th>
+            <th>Password*</th>
+            <th>Email</th>
+            <th>Position</th>
+            <th>Address</th>
+            <th>First Telephone</th>
+            <th>Second Telephone</th>
+            <th>Hire Date</th>
+            <th>Work Hours</th>
+            <th>Salary</th>
+            <th>Notes</th>
+            <th>Add</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('name'));
+                echo $this->formElementErrors($fieldset->get('name'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('surname'));
+                echo $this->formElementErrors($fieldset->get('surname'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('username'));
+                echo $this->formElementErrors($fieldset->get('username'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('password'));
+                echo $this->formElementErrors($fieldset->get('password'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('email'));
+                echo $this->formElementErrors($fieldset->get('email'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('position'));
+                echo $this->formElementErrors($fieldset->get('position'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('address'));
+                echo $this->formElementErrors($fieldset->get('address'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('firstTelephone'));
+                echo $this->formElementErrors($fieldset->get('firstTelephone'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('secondTelephone'));
+                echo $this->formElementErrors($fieldset->get('secondTelephone'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('hireDate'), array('class','formDate'));
+                echo $this->formElementErrors($fieldset->get('hireDate'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('workHours'));
+                echo $this->formElementErrors($fieldset->get('workHours'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('salary'));
+                echo $this->formElementErrors($fieldset->get('salary'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formTextarea($fieldset->get('notes'));
+                echo $this->formElementErrors($fieldset->get('notes'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php echo $this->formSubmit($form->get('submit')->setValue($this->translate('Add'))); ?>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <?php echo $this->form()->closeTag() ?>
+</div>
+<table id="workers" class="editableTable">
+    <caption>Worker's List</caption>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Email</th>
+        <th>Position</th>
+        <th>Address</th>
+        <th>First Telephone</th>
+        <th>Second Telephone</th>
+        <th>Hire Date</th>
+        <th>Work Hours</th>
+        <th>Salary</th>
+        <th>Notes</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($workers as $worker): ?>
+        <tr>
+            <td class="workerWorkerId invisible"><?php echo $worker->getWorkerId(); ?></td>
+            <td class="workerName editText"><?php echo $worker->getName(); ?></td>
+            <td class="workerSurname editText"><?php echo $worker->getSurname(); ?></td>
+            <td class="workerUsername editText"><?php echo $worker->getUsername(); ?></td>
+            <td class="workerPassword editText">**********</td>
+            <td class="workerEmail editText"><?php echo $worker->getEmail(); ?></td>
+            <td class="workerPosition editText"><?php echo $worker->getPosition(); ?></td>
+            <td class="workerAddress editText"><?php echo $worker->getAddress(); ?></td>
+            <td class="workerFirstTelephone editText"><?php echo $worker->getFirstTelephone(); ?></td>
+            <td class="workerSecondTelephone editText"><?php echo $worker->getSecondTelephone(); ?></td>
+            <td class="workerHireDate editDatetime"><?php echo $worker->getHireDate()->format('d-m-Y'); ?></td>
+            <td class="workerWorkHours editText"><?php echo $worker->getWorkHours(); ?></td>
+            <td class="workerSalary editText"><?php echo $worker->getSalary(); ?></td>
+            <td class="workerNotes editText"><?php echo $worker->getNotes(); ?></td>
+            <td class="delete">X</td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+<div id="editPanel">
+    <textarea></textarea>
+    <span id="editDone">Done</span>
+</div>
