@@ -1,0 +1,44 @@
+<?php
+$form->prepare();
+$form->setAttribute('action', $this->url('admins/add'));
+$fieldset = $form->get('admin');
+echo $this->form()->openTag($form);
+echo $this->formHidden($form->get('security'));
+?>
+<table>
+    <caption>Add a New Admin</caption>
+    <thead>
+    <tr>
+        <th>Username*</th>
+        <th>Password*</th>
+        <th>Worker Profile</th>
+        <th>Add</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('username'));
+            echo $this->formElementErrors($fieldset->get('username'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('password'));
+            echo $this->formElementErrors($fieldset->get('password'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formSelect($fieldset->get('relatedWorker'));
+            echo $this->formElementErrors($fieldset->get('relatedWorker'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php echo $this->formSubmit($form->get('submit')->setValue($this->translate('Add'))); ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<?php echo $this->form()->closeTag() ?>

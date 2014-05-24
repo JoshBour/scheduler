@@ -33,6 +33,7 @@ class IndexController extends AbstractActionController
 
     public function listAction()
     {
+        if(!$this->identity()) $this->layout()->setTemplate('layout/no-header');
         $startDate = new \DateTime($this->params()->fromRoute('startDate', 'first day of this month'));
         $endDate = new \DateTime($this->params()->fromRoute('endDate', 'last day of this month'));
         $workers = $this->getWorkerRepository()->findAll();
@@ -63,7 +64,7 @@ class IndexController extends AbstractActionController
 
     public function saveAction()
     {
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $success = 1;
             $message = self::MESSAGE_ENTRIES_SAVED;
             $entities = $this->params()->fromPost('entities');
@@ -86,7 +87,7 @@ class IndexController extends AbstractActionController
          * @var $request \Zend\Http\Request
          */
         $request = $this->getRequest();
-        if ($request->isXmlHttpRequest()) {
+        if ($request->isXmlHttpRequest() && $this->identity()) {
             $service = $this->getEntryService();
             $data = $request->getPost();
             if ($request->isPost()) {

@@ -19,8 +19,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Worker {
 
-    const HASH_SALT = 'schedulerbour';
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -92,29 +90,6 @@ class Worker {
      * @ORM\Column(type="text", nullable=true)
      */
     private $notes;
-
-    /**
-     * Hash the password.
-     *
-     * @param string $password
-     * @return string
-     */
-    public static function getHashedPassword($password)
-    {
-        return crypt($password . self::HASH_SALT);
-    }
-
-    /**
-     * Check if the user's password is the same as the provided one.
-     *
-     * @param Worker $worker
-     * @param string $password
-     * @return bool
-     */
-    public static function hashPassword($worker, $password)
-    {
-        return ($worker->getPassword() === crypt($password . self::HASH_SALT, $worker->getPassword()));
-    }
 
     public static function decodeId($id){
         $split = explode(':',$id);
@@ -247,22 +222,6 @@ class Worker {
     public function getNotes()
     {
         return $this->notes;
-    }
-
-    /**
-     * @param mixed $password
-     */
-    public function setPassword($password)
-    {
-        $this->password = self::getHashedPassword($password);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPassword()
-    {
-        return $this->password;
     }
 
     /**

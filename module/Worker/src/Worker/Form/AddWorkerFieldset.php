@@ -19,11 +19,8 @@ class AddWorkerFieldset extends Fieldset implements InputFilterProviderInterface
      */
     private $translator;
 
-    const ERROR_USERNAME_EMPTY = "The username can't be empty.";
     const ERROR_NAME_EMPTY = "The name can't be empty.";
     const ERROR_SURNAME_EMPTY = "The surname can't be empty.";
-    const ERROR_PASSWORD_EMPTY = "The password can't be empty.";
-    const ERROR_PASSWORD_INVALID_LENGTH = "The password must be at least 5 characters short.";
     const ERROR_EMAIL_INVALID = "The email has invalid format.";
 
     public function __construct($translator)

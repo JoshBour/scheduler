@@ -37,6 +37,10 @@ $(function () {
         $('#addWorkers').slideToggle();
     });
 
+    $('#addAdminToggle').on('click', function () {
+        $('#addAdmin').slideToggle();
+    });
+
     $('#dateRangeToggle').on('click', function () {
         $('#dateRange').slideToggle();
     });
@@ -73,50 +77,15 @@ $(function () {
         formatDate: 'd-m-Y'
     });
 
-    $(document).on('submit', '#addWorkerForm', function (e) {
+    $(document).on('submit', '#addWorkerForm, #addAdminForm, #addEntryForm, #addExceptionForm', function (e) {
         var form = $(this);
         var parent = form.parent();
         parent.toggleLoadingImage();
         form.ajaxSubmit({
-            target: '#addWorkerForm',
+            target: '#'+form.attr('id'),
             type: "post",
             success: function (responseText) {
-                if (responseText.redirect) {
-                    location.reload();
-                }
-                parent.toggleLoadingImage();
-            }
-        });
-        return false;
-    });
-
-    $(document).on('submit', '#addEntryForm', function (e) {
-        var form = $(this);
-        var parent = form.parent();
-        parent.toggleLoadingImage();
-        form.ajaxSubmit({
-            target: '#addEntryForm',
-            type: "post",
-            success: function (responseText) {
-                if (responseText.redirect) {
-                    location.reload();
-                }
-                $('.datetimeInput').datetimepicker({
-                });
-                parent.toggleLoadingImage();
-            }
-        });
-        return false;
-    });
-
-    $(document).on('submit', '#addExceptionForm', function (e) {
-        var form = $(this);
-        var parent = form.parent();
-        parent.toggleLoadingImage();
-        form.ajaxSubmit({
-            target: '#addExceptionForm',
-            type: "post",
-            success: function (responseText) {
+                console.log(responseText);
                 if (responseText.redirect) {
                     location.reload();
                 }

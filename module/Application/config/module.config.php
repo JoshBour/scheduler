@@ -17,13 +17,23 @@ return array(
     ),
     'router' => array(
         'routes' => array(
-            'home' => array(
+            'login' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route'    => '/',
+                    'route' => '/',
                     'defaults' => array(
                         'controller' => __NAMESPACE__ . '\Controller\Index',
-                        'action'     => 'index',
+                        'action' => 'login',
+                    ),
+                ),
+            ),
+            'logout' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route' => '/logout',
+                    'defaults' => array(
+                        'controller' => __NAMESPACE__ . '\Controller\Index',
+                        'action' => 'logout',
                     ),
                 ),
             ),
@@ -34,21 +44,37 @@ return array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
         ),
+        'invokables' => array(
+            'authStorage' => __NAMESPACE__ . '\Model\AuthStorage',
+        ),
+        'factories' => array(
+            'login_form' => __NAMESPACE__ . '\Factory\LoginFormFactory',
+            'Zend\Authentication\AuthenticationService' => __NAMESPACE__ . '\Factory\AuthFactory',
+        ),
         'aliases' => array(
             'translator' => 'MvcTranslator',
+            'auth_service' => 'Zend\Authentication\AuthenticationService'
         ),
+    ),
+    'controller_plugins' => array(
+        'factories' => array(
+            'admin' => __NAMESPACE__ . '\Factory\AdminPluginFactory'
+        )
     ),
     'translator' => array(
         'locale' => 'en_US',
         'translation_file_patterns' => array(
             array(
-                'type'     => 'gettext',
+                'type' => 'gettext',
                 'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.mo',
+                'pattern' => '%s.mo',
             ),
         ),
     ),
     'view_helpers' => array(
+        'factories' => array(
+            'admin' => __NAMESPACE__ . '\Factory\AdminViewHelperFactory'
+        ),
         'invokables' => array(
             'mobile' => 'Application\View\Helper\Mobile',
         )
@@ -60,17 +86,18 @@ return array(
     ),
     'view_manager' => array(
         'display_not_found_reason' => true,
-        'display_exceptions'       => true,
-        'doctype'                  => 'HTML5',
-        'not_found_template'       => 'error/404',
-        'exception_template'       => 'error/index',
+        'display_exceptions' => true,
+        'doctype' => 'HTML5',
+        'not_found_template' => 'error/404',
+        'exception_template' => 'error/index',
         'template_map' => array(
-            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
-            'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
-            'error/404'               => __DIR__ . '/../view/error/404.phtml',
-            'error/index'             => __DIR__ . '/../view/error/index.phtml',
-            'header'                  => __DIR__ . '/../view/partial/header.phtml',
-            'footer'                  => __DIR__ . '/../view/partial/footer.phtml',
+            'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
+            'layout/no-header' => __DIR__ . '/../view/layout/no-header-layout.phtml',
+            'error/404' => __DIR__ . '/../view/error/404.phtml',
+            'error/index' => __DIR__ . '/../view/error/index.phtml',
+            'header' => __DIR__ . '/../view/partial/header.phtml',
+            'footer' => __DIR__ . '/../view/partial/footer.phtml',
+            'footer_guest' => __DIR__ . '/../view/partial/footer-guest.phtml',
         ),
         'template_path_stack' => array(
             __DIR__ . '/../view',

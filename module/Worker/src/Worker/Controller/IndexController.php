@@ -35,22 +35,26 @@ class IndexController extends AbstractActionController
 
     public function listAction()
     {
-        $workers = $this->getWorkerRepository()->findAll();
-        $hideForm = false;
-        if (!$form = $this->params()->fromQuery('form')) {
-            $form = $this->getAddWorkerForm();
-            $hideForm = true;
+        if ($this->identity()) {
+            $workers = $this->getWorkerRepository()->findAll();
+            $hideForm = false;
+            if (!$form = $this->params()->fromQuery('form')) {
+                $form = $this->getAddWorkerForm();
+                $hideForm = true;
+            }
+            return new ViewModel(array(
+                "workers" => $workers,
+                "form" => $form,
+                "hideForm" => $hideForm
+            ));
+        } else {
+            return $this->notFoundAction();
         }
-        return new ViewModel(array(
-            "workers" => $workers,
-            "form" => $form,
-            "hideForm" => $hideForm
-        ));
     }
 
     public function saveAction()
     {
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $success = 1;
             $message = self::MESSAGE_WORKER_SAVED;
             $entities = $this->params()->fromPost('entities');
@@ -86,7 +90,7 @@ class IndexController extends AbstractActionController
          * @var $request \Zend\Http\Request
          */
         $request = $this->getRequest();
-        if ($request->isXmlHttpRequest()) {
+        if ($request->isXmlHttpRequest() && $this->identity()) {
             $service = $this->getWorkerService();
             $data = $request->getPost();
             if ($request->isPost()) {
@@ -107,7 +111,7 @@ class IndexController extends AbstractActionController
 
     public function removeAction()
     {
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $id = $this->params()->fromPost("id");
             $success = 0;
             $message = self::MESSAGE_WORKER_REMOVED;

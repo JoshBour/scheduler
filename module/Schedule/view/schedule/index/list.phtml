@@ -2,6 +2,7 @@
     <span id="dateRangeToggle">
         Select Date Range
     </span>
+    <?php if($this->identity()): ?>
     <span id="addEntryToggle">
         + Add New Entry
     </span>
@@ -11,6 +12,7 @@
     <span id="resetChanges">
         Reset
     </span>
+    <?php endif; ?>
 </div>
 <div id="dateRange" class="invisible">
     <h2>Select a Date Range</h2>
@@ -20,6 +22,7 @@
     <input type="text" id="dateRangeEnd"/>
     <span class="button">Show</span>
 </div>
+<?php if($this->identity()): ?>
 <div id="addEntry"<?php echo $hideForm ? ' class="invisible"' : ''; ?>>
     <?php
     $form->prepare();
@@ -74,9 +77,10 @@
     </table>
     <?php echo $this->form()->closeTag() ?>
 </div>
+<?php endif; ?>
 <table id="scheduleTable">
-    <caption>Schedule from <?php echo $startDate->format('l, j F Y'); ?>
-        to <?php echo $endDate->format('l, j F Y'); ?></caption>
+    <caption><?php echo $startDate->format('l j F Y'); ?>
+        - <?php echo $endDate->format('l j F Y'); ?></caption>
     <thead>
     <tr>
         <th>Workers - Days</th>
@@ -119,6 +123,7 @@
     <?php endforeach; ?>
     </tbody>
 </table>
+<?php if($this->identity()): ?>
 <div id="editPanel">
     <?php
     $form->prepare();
@@ -152,3 +157,4 @@
     echo $this->form()->closeTag() ?>
     <span id="formEditDone">Done</span>
 </div>
+<?php endif;?>

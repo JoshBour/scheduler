@@ -1,0 +1,87 @@
+<div id="optionPanel">
+    <span id="addAdminToggle">
+        + Add Admin
+    </span>
+    <span id="saveChanges">
+        Save
+    </span>
+    <span id="resetChanges">
+        Reset
+    </span>
+</div>
+<div id="addAdmin"<?php echo $hideForm ? ' class="invisible"':'';?>>
+    <?php
+    $form->prepare();
+    $form->setAttribute('action', $this->url('admins/add'));
+    $fieldset = $form->get('admin');
+    echo $this->form()->openTag($form);
+    echo $this->formHidden($form->get('security'));
+    ?>
+    <table>
+        <caption>Add a New Admin</caption>
+        <thead>
+        <tr>
+            <th>Username*</th>
+            <th>Password*</th>
+            <th>Worker Profile</th>
+            <th>Add</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('username'));
+                echo $this->formElementErrors($fieldset->get('username'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('password'));
+                echo $this->formElementErrors($fieldset->get('password'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formSelect($fieldset->get('relatedWorker'));
+                echo $this->formElementErrors($fieldset->get('relatedWorker'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php echo $this->formSubmit($form->get('submit')->setValue($this->translate('Add'))); ?>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <?php echo $this->form()->closeTag() ?>
+</div>
+<table id="admins" class="editableTable">
+    <caption>Admin List</caption>
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Related Worker</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php
+    /**
+     * @var \Admin\Entity\Admin $admin
+     */
+    foreach ($admins as $admin): ?>
+        <tr>
+            <td class="adminAdminId invisible"><?php echo $admin->getAdminId(); ?></td>
+            <td class="adminUsername editText"><?php echo $admin->getUsername(); ?></td>
+            <td class="adminPassword editText">**********</td>
+            <td class="adminWorker editText"><?php echo is_null($admin->getRelatedWorker()) ? '':$admin->getRelatedWorker()->getFullName(); ?></td>
+            <td class="delete">X</td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+<div id="editPanel">
+    <textarea></textarea>
+    <span id="editDone">Done</span>
+</div>

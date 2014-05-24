@@ -33,17 +33,21 @@ class ExceptionController extends AbstractActionController
 
     public function listAction()
     {
-        $exceptions = $this->getExceptionRepository()->findAll();
-        return new ViewModel(array(
-            "exceptions" => $exceptions,
-            "hideForm" => true,
-            "form" => $this->getAddExceptionForm()
-        ));
+        if ($this->identity()) {
+            $exceptions = $this->getExceptionRepository()->findAll();
+            return new ViewModel(array(
+                "exceptions" => $exceptions,
+                "hideForm" => true,
+                "form" => $this->getAddExceptionForm()
+            ));
+        } else {
+            return $this->notFoundAction();
+        }
     }
 
     public function saveAction()
     {
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $success = 1;
             $message = self::MESSAGE_EXCEPTIONS_SAVED;
             $entities = $this->params()->fromPost('entities');
@@ -53,7 +57,7 @@ class ExceptionController extends AbstractActionController
                 $exception = $exceptionRepository->find($entity['ExceptionId']);
                 array_shift($entity);
                 foreach ($entity as $key => $value) {
-                    if(empty($value)) $value = null;
+                    if (empty($value)) $value = null;
                     $exception->{'set' . $key}($value);
                 }
                 $em->persist($exception);
@@ -79,7 +83,7 @@ class ExceptionController extends AbstractActionController
          * @var $request \Zend\Http\Request
          */
         $request = $this->getRequest();
-        if ($request->isXmlHttpRequest()) {
+        if ($request->isXmlHttpRequest() && $this->identity()) {
             $service = $this->getExceptionService();
             $data = $request->getPost();
             if ($request->isPost()) {
@@ -100,13 +104,13 @@ class ExceptionController extends AbstractActionController
 
     public function removeAction()
     {
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $id = $this->params()->fromPost("id");
             $success = 0;
             $message = self::MESSAGE_EXCEPTION_REMOVED;
-            if($this->getExceptionService()->remove($id)){
+            if ($this->getExceptionService()->remove($id)) {
                 $success = 1;
-            }else{
+            } else {
                 $message = self::ERROR_EXCEPTION_REMOVE;
             }
             return new JsonModel(array(
@@ -123,8 +127,9 @@ class ExceptionController extends AbstractActionController
      *
      * @return \Zend\Form\Form
      */
-    public function getAddExceptionForm(){
-        if(null === $this->addExceptionForm)
+    public function getAddExceptionForm()
+    {
+        if (null === $this->addExceptionForm)
             $this->addExceptionForm = $this->getServiceLocator()->get('exception_add_form');
         return $this->addExceptionForm;
     }
@@ -146,8 +151,9 @@ class ExceptionController extends AbstractActionController
      *
      * @return \Doctrine\ORM\EntityRepository
      */
-    public function getExceptionRepository(){
-        if(null === $this->exceptionRepository)
+    public function getExceptionRepository()
+    {
+        if (null === $this->exceptionRepository)
             $this->exceptionRepository = $this->getEntityManager()->getRepository('Schedule\Entity\Exception');
         return $this->exceptionRepository;
     }
@@ -157,8 +163,9 @@ class ExceptionController extends AbstractActionController
      *
      * @return \Schedule\Service\Exception
      */
-    public function getExceptionService(){
-        if(null === $this->exceptionService)
+    public function getExceptionService()
+    {
+        if (null === $this->exceptionService)
             $this->exceptionService = $this->getServiceLocator()->get('exception_service');
         return $this->exceptionService;
     }
@@ -174,4 +181,4 @@ class ExceptionController extends AbstractActionController
             $this->translator = $this->getServiceLocator()->get('translator');
         return $this->translator;
     }
-} 
+}

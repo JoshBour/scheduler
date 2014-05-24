@@ -27,25 +27,14 @@ if (!empty($messages)) :
         </ul>
     </div>
 <?php endif; ?>
-<?php if($this->identity()): ?>
-<header>
-    <nav>
-        <ul>
-            <li><a href="<?php echo $this->url('workers'); ?>">Workers</a></li>
-            <li><a href="<?php echo $this->url('schedule'); ?>">Schedule</a></li>
-            <li><a href="<?php echo $this->url('admins'); ?>">Admins</a></li>
-            <li><a href="<?php echo $this->url('exceptions'); ?>">Exceptions</a></li>
-            <li><a href="<?php echo $this->url('logout'); ?>">Logout</a></li>
-        </ul>
-    </nav>
-</header>
+<?php if(!$child->hideHeader && $this->identity()): ?>
 <?php endif; ?>
 <div id="content">
     <?php echo $this->content; ?>
 </div>
 <?php
 // The layout's footer
-echo $this->partial("footer", array('child' => $child));
+echo $this->partial("footer_guest", array('child' => $child));
 ?>
 </body>
 </html>
