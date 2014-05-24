@@ -73,7 +73,8 @@ return array(
     ),
     'view_helpers' => array(
         'factories' => array(
-            'admin' => __NAMESPACE__ . '\Factory\AdminViewHelperFactory'
+            'admin' => __NAMESPACE__ . '\Factory\AdminViewHelperFactory',
+            'actionName' => 'Application\Factory\ActionNameHelperFactory'
         ),
         'invokables' => array(
             'mobile' => 'Application\View\Helper\Mobile',

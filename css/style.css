@@ -114,14 +114,14 @@
     nav ul{
         display:inline-block;
         text-align:center;
-        border-left: 1px solid #eee;
-        border-right: 1px solid #bbb;
+        border-left: 1px solid #bbb;
+        border-right: 1px solid #eee;
     }
 
     nav ul li{
         float: left;
-        border-left: 1px solid #bbb;
-        border-right: 1px solid #eee;
+        border-left: 1px solid #eee;
+        border-right: 1px solid #bbb;
         position: relative;
     }
 
@@ -131,6 +131,10 @@
         color: #333;
         font-weight: 700;
         vertical-align: middle;
+    }
+
+    nav ul li a.active{
+        background:#ececef;
     }
 
     nav ul li:hover{

@@ -27,18 +27,19 @@ if (!empty($messages)) :
         </ul>
     </div>
 <?php endif; ?>
-<?php if($this->identity()): ?>
-<header>
-    <nav>
-        <ul>
-            <li><a href="<?php echo $this->url('workers'); ?>">Workers</a></li>
-            <li><a href="<?php echo $this->url('schedule'); ?>">Schedule</a></li>
-            <li><a href="<?php echo $this->url('admins'); ?>">Admins</a></li>
-            <li><a href="<?php echo $this->url('exceptions'); ?>">Exceptions</a></li>
-            <li><a href="<?php echo $this->url('logout'); ?>">Logout</a></li>
-        </ul>
-    </nav>
-</header>
+<?php if ($this->identity()):
+    $route = $this->actionName(); ?>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="<?php echo $this->url('workers'); ?>"<?php echo $route == "workers" ? ' class="active"' : ''; ?>>Workers</a></li>
+                <li><a href="<?php echo $this->url('schedule'); ?>"<?php echo $route == "schedule" ? ' class="active"' : ''; ?>>Schedule</a></li>
+                <li><a href="<?php echo $this->url('admins'); ?>"<?php echo $route == "admins" ? ' class="active"' : ''; ?>>Admins</a></li>
+                <li><a href="<?php echo $this->url('exceptions'); ?>"<?php echo $route == "exceptions" ? ' class="active"' : ''; ?>>Exceptions</a></li>
+                <li><a href="<?php echo $this->url('logout'); ?>">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
 <?php endif; ?>
 <div id="content">
     <?php echo $this->content; ?>
