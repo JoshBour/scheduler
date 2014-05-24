@@ -23,14 +23,13 @@
         <tr>
             <th>Name*</th>
             <th>Surname*</th>
-            <th>Username*</th>
-            <th>Password*</th>
             <th>Email</th>
             <th>Position</th>
             <th>Address</th>
             <th>First Telephone</th>
             <th>Second Telephone</th>
             <th>Hire Date</th>
+            <th>Release Date</th>
             <th>Work Hours</th>
             <th>Salary</th>
             <th>Notes</th>
@@ -49,18 +48,6 @@
                 <?php
                 echo $this->formInput($fieldset->get('surname'));
                 echo $this->formElementErrors($fieldset->get('surname'), array('class' => 'formError'));
-                ?>
-            </td>
-            <td>
-                <?php
-                echo $this->formInput($fieldset->get('username'));
-                echo $this->formElementErrors($fieldset->get('username'), array('class' => 'formError'));
-                ?>
-            </td>
-            <td>
-                <?php
-                echo $this->formInput($fieldset->get('password'));
-                echo $this->formElementErrors($fieldset->get('password'), array('class' => 'formError'));
                 ?>
             </td>
             <td>
@@ -95,8 +82,14 @@
             </td>
             <td>
                 <?php
-                echo $this->formInput($fieldset->get('hireDate'), array('class','formDate'));
+                echo $this->formInput($fieldset->get('hireDate'));
                 echo $this->formElementErrors($fieldset->get('hireDate'), array('class' => 'formError'));
+                ?>
+            </td>
+            <td>
+                <?php
+                echo $this->formInput($fieldset->get('releaseDate'));
+                echo $this->formElementErrors($fieldset->get('releaseDate'), array('class' => 'formError'));
                 ?>
             </td>
             <td>
@@ -131,14 +124,13 @@
     <tr>
         <th>Name</th>
         <th>Surname</th>
-        <th>Username</th>
-        <th>Password</th>
         <th>Email</th>
         <th>Position</th>
         <th>Address</th>
         <th>First Telephone</th>
         <th>Second Telephone</th>
         <th>Hire Date</th>
+        <th>Release Date</th>
         <th>Work Hours</th>
         <th>Salary</th>
         <th>Notes</th>
@@ -146,19 +138,22 @@
     </tr>
     </thead>
     <tbody>
-    <?php foreach ($workers as $worker): ?>
+    <?php
+    /**
+     * @var \Worker\Entity\Worker $worker
+     */
+    foreach ($workers as $worker): ?>
         <tr>
             <td class="workerWorkerId invisible"><?php echo $worker->getWorkerId(); ?></td>
             <td class="workerName editText"><?php echo $worker->getName(); ?></td>
             <td class="workerSurname editText"><?php echo $worker->getSurname(); ?></td>
-            <td class="workerUsername editText"><?php echo $worker->getUsername(); ?></td>
-            <td class="workerPassword editText">**********</td>
             <td class="workerEmail editText"><?php echo $worker->getEmail(); ?></td>
             <td class="workerPosition editText"><?php echo $worker->getPosition(); ?></td>
             <td class="workerAddress editText"><?php echo $worker->getAddress(); ?></td>
             <td class="workerFirstTelephone editText"><?php echo $worker->getFirstTelephone(); ?></td>
             <td class="workerSecondTelephone editText"><?php echo $worker->getSecondTelephone(); ?></td>
-            <td class="workerHireDate editDatetime"><?php echo $worker->getHireDate()->format('d-m-Y'); ?></td>
+            <td class="workerHireDate editDatetime"><?php echo is_null($worker->getHireDate()) ? '': $worker->getHireDate()->format('d-m-Y'); ?></td>
+            <td class="workerReleaseDate editDatetime"><?php echo is_null($worker->getReleaseDate()) ? '': $worker->getReleaseDate()->format('d-m-Y'); ?></td>
             <td class="workerWorkHours editText"><?php echo $worker->getWorkHours(); ?></td>
             <td class="workerSalary editText"><?php echo $worker->getSalary(); ?></td>
             <td class="workerNotes editText"><?php echo $worker->getNotes(); ?></td>

@@ -33,42 +33,31 @@ class IndexController extends AbstractActionController
 
     public function listAction()
     {
-        $startDate = new \DateTime($this->params()->fromRoute('startDate', date('d-m-Y')));
-        $endDate = new \DateTime($this->params()->fromRoute('endDate', date('d-m-Y')));
-
-        $entries = $this->getEntryRepository()->findEntriesBetweenDates($startDate, $endDate);
+        $startDate = new \DateTime($this->params()->fromRoute('startDate', 'first day of this month'));
+        $endDate = new \DateTime($this->params()->fromRoute('endDate', 'last day of this month'));
+        $workers = $this->getWorkerRepository()->findAll();
         $dates = array();
-
-
         $interval = $startDate->diff($endDate)->days + 1;
 
-
-        foreach ($entries as $entry) {
-            $workers[] = $entry->getWorker()->getFullName();
-        }
-        array_unique($workers);
-        $i = 0;
-        while ($i < count($workers)) {
+        foreach($workers as $worker){
+            $id = $worker->getEncodedId();
             $startDateClone = clone $startDate;
             for ($j = 0; $j < $interval; $j++) {
-                $dates[$workers[$i]][$startDateClone->format('d-m-Y')] = array();
+                $dates[$id][$startDateClone->format('d-m-Y')] = array();
                 $startDateClone->modify('+1 day');
             }
-            $i++;
+            $entries = $this->getEntryRepository()->findEntriesBetweenDates($startDate, $endDate,$worker);
+            foreach($entries as $entry){
+                $dates[$id][$entry->getStartTime()->format('d-m-Y')][] = $entry;
+            }
         }
-
-
-        foreach ($entries as $entry) {
-            $startTime = $entry->getStartTime()->format('d-m-Y');
-            $dates[$entry->getWorker()->getFullName()][$startTime] = $entry;
-        }
-
         return new ViewModel(array(
             "startDate" => $startDate,
             "endDate" => $endDate,
             "dates" => $dates,
             "hideForm" => true,
-            "form" => $this->getAddEntryForm()
+            "form" => $this->getAddEntryForm(),
+            "bodyClass" => "schedulePage"
         ));
     }
 

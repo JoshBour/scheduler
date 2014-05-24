@@ -173,16 +173,20 @@
         text-align: center;
     }
 
-    td:hover{
-        background:#fafafa;
+    table>tbody>tr>td {
+        height: 100%;
     }
 
-    td.activeTd{
+    tr:hover{
+        background: #efefef;
+    }
+
+    .activeField{
         background:yellow;
         cursor:default;
     }
 
-    td.activeTd:hover{
+    .activeField:hover{
         background:yellow;
     }
 
@@ -299,6 +303,26 @@
 
         #dateRange span{
             margin-left:10px;
+        }
+
+        #scheduleTable td{
+            padding:0;
+        }
+
+
+        .entry{
+            padding:10px;
+            vertical-align: middle;
+            border-bottom: 1px solid #ccc;
+            display: inline-block;
+        }
+
+        .entry.highlighted{
+            background:#ddd;
+        }
+
+        .entry:last-of-type{
+            border-bottom:none;
         }
 
 /* ===================================================== */

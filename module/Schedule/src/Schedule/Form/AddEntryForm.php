@@ -38,8 +38,6 @@ class AddEntryForm extends Form{
                 'exception',
                 'startTime',
                 'endTime',
-                'totalTime',
-                'extraTime',
             )
         ));
     }

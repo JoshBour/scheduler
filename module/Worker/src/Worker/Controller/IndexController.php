@@ -60,7 +60,8 @@ class IndexController extends AbstractActionController
                 $worker = $workerRepository->find($entity['WorkerId']);
                 array_shift($entity);
                 foreach ($entity as $key => $value) {
-                    $worker->{'set' . $key}($value);
+                    if (!empty($value))
+                        $worker->{'set' . $key}($value);
                 }
                 $em->persist($worker);
             }
@@ -110,9 +111,9 @@ class IndexController extends AbstractActionController
             $id = $this->params()->fromPost("id");
             $success = 0;
             $message = self::MESSAGE_WORKER_REMOVED;
-            if($this->getWorkerService()->remove($id)){
+            if ($this->getWorkerService()->remove($id)) {
                 $success = 1;
-            }else{
+            } else {
                 $message = "There was a problem when removing the worker, please try again.";
             }
             return new JsonModel(array(

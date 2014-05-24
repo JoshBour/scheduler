@@ -66,23 +66,30 @@ class Entry implements ServiceManagerAwareInterface
         $workerRepository = $this->getWorkerRepository();
         $em = $this->getEntityManager();
         foreach ($entities as $entity) {
-         #   var_dump($entity);
-            $entry = $entryRepository->find($entity["entryId"]);
-//            $worker = $workerRepository->findOneBy(array('surname'=>$entity["surname"]));
+            $entry = empty($entity["entryId"]) ? new EntryEntity() : $entryRepository->find($entity["entryId"]);
+            $worker = $workerRepository->find($entity["workerId"]);
             if (!empty($entity["exception"])) {
                 $exception = $this->getExceptionRepository()->findOneBy(array('name' => $entity["exception"]));
                 $entry->setException($exception);
             }
-            $entry->setStartTime($entity["startTime"]);
-            $entry->setEndTime($entity["endTime"]);
-            $entry->setTotalTime($entity["totalTime"]);
-            $entry->setExtraTime($entity["extraTime"]);
+            $entry->setWorker($worker);
+            if(empty($entity["startTime"])){
+                $entry->setStartTime(null);
+            }else{
+                $entry->setStartTime($entity["startTime"]);
+            }
+            if(empty($entity["endTime"])){
+                $entry->setEndTime(null);
+            }else{
+                $entry->setEndTime($entity["endTime"]);
+            }
             $em->persist($entry);
         }
         try {
             $em->flush();
             return true;
         } catch (\Exception $e) {
+            echo $e->getMessage();
             return false;
         }
     }

@@ -119,6 +119,9 @@ return array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
+        'template_map' => array(
+            'entry' => __DIR__ . '/../view/partial/entry.phtml'
+        ),
         'strategies' => array(
             'ViewJsonStrategy'
         ),

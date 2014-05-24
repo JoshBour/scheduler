@@ -96,26 +96,6 @@ class AddEntryFieldset extends Fieldset implements InputFilterProviderInterface
                 )
             )
         );
-
-        $this->add(
-            array(
-                'name' => 'totalTime',
-                'type' => 'text',
-                'options' => array(
-                    'label' => $this->translator->translate(self::LABEL_TOTAL_TIME)
-                )
-            )
-        );
-
-        $this->add(
-            array(
-                'name' => 'extraTime',
-                'type' => 'text',
-                'options' => array(
-                    'label' => $this->translator->translate(self::LABEL_EXTRA_TIME)
-                )
-            )
-        );
     }
 
     /**
@@ -167,24 +147,6 @@ class AddEntryFieldset extends Fieldset implements InputFilterProviderInterface
                         'options' => array(
                             'messages' => array(
                                 \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_END_TIME_EMPTY)
-                            )
-                        )
-                    ),
-                ),
-                'required' => true,
-                'filters' => array(
-                    array('name' => 'StringTrim'),
-                    array('name' => 'StripTags')
-                )
-            ),
-            'totalTime' => array(
-                'validators' => array(
-                    array(
-                        'name' => 'NotEmpty',
-                        'break_chain_on_failure' => true,
-                        'options' => array(
-                            'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_TOTAL_TIME_EMPTY)
                             )
                         )
                     ),

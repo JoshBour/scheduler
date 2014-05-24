@@ -39,7 +39,8 @@ class Worker implements ServiceManagerAwareInterface
         $form->bind($worker);
         $form->setData($data);
         if (!$form->isValid()) return false;
-        $worker->setPassword(WorkerEntity::getHashedPassword($worker->getPassword()));
+        if($data['hireDate'] == null) $worker->setHireDate(null);
+        if($data['releaseDate'] == null) $worker->setReleaseDate(null);
         try {
             $em->persist($worker);
             $em->flush();

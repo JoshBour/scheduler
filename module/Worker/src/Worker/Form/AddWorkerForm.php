@@ -35,14 +35,13 @@ class AddWorkerForm extends Form{
             'worker' => array(
                 'name',
                 'surname',
-                'username',
-                'password',
                 'email',
                 'position',
                 'address',
                 'firstTelephone',
                 'secondTelephone',
                 'hireDate',
+                'releaseDate',
                 'workHours',
                 'notes',
             )

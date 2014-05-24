@@ -1,0 +1,26 @@
+<?php
+if (!empty($entry)) {
+    $entryId = $entry->getEntryId();
+    $exception = $entry->getException();
+    $startTime = $entry->getStartTime();
+    $endTime = $entry->getEndTime();
+    $entryValue = $exception === null ? $entry->getStartTime()->format('H:i') . ' - ' . $entry->getEndTime()->format('H:i') : $entry->getException()->getName();
+} else {
+    $entryId = '';
+    $exception = null;
+    $startTime = '';
+    $endTime = '';
+    $entryValue = ' - ';
+}
+?>
+<div class="entry">
+    <span class="invisible workerId"><?php echo $workerId; ?></span>
+    <span class="invisible entryId"><?php echo $entryId; ?></span>
+<span
+    class="invisible exception"><?php echo $exception === null ? '' : $exception->getName(); ?></span>
+    <span class="invisible startDate"><?php echo empty($startTime) ? $date : $startTime->format('d-m-Y'); ?></span>
+    <span class="invisible startTime"><?php echo empty($startTime) ? '' : $startTime->format('H:i'); ?></span>
+    <span class="invisible endDate"><?php echo empty($endTime) ? $date : $endTime->format('d-m-Y'); ?></span>
+    <span class="invisible endTime"><?php echo empty($endTime) ? '' : $endTime->format('H:i'); ?></span>
+    <span class="entryValue"><?php echo $entryValue; ?></span>
+</div>

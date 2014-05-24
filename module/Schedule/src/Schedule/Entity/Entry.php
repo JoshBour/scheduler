@@ -48,21 +48,11 @@ class Entry {
     private $endTime;
 
     /**
-     * @ORM\Column(type="string", length=10, name="total_time")
-     */
-    private $totalTime;
-
-    /**
-     * @ORM\Column(type="string", length=10, name="extra_time", nullable=true)
-     */
-    private $extraTime;
-
-    /**
      * @param mixed $endTime
      */
     public function setEndTime($endTime)
     {
-        if(!($endTime instanceof \DateTime)){
+        if(!($endTime instanceof \DateTime) && $endTime !== null){
             $endTime = new \DateTime($endTime);
         }
         $this->endTime = $endTime;
@@ -109,27 +99,11 @@ class Entry {
     }
 
     /**
-     * @param mixed $extraTime
-     */
-    public function setExtraTime($extraTime)
-    {
-        $this->extraTime = $extraTime;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getExtraTime()
-    {
-        return $this->extraTime;
-    }
-
-    /**
      * @param mixed $startTime
      */
     public function setStartTime($startTime)
     {
-        if(!($startTime instanceof \DateTime)){
+        if(!($startTime instanceof \DateTime) && $startTime !== null){
             $startTime = new \DateTime($startTime);
         }
         $this->startTime = $startTime;
@@ -141,22 +115,6 @@ class Entry {
     public function getStartTime()
     {
         return $this->startTime;
-    }
-
-    /**
-     * @param mixed $totalTime
-     */
-    public function setTotalTime($totalTime)
-    {
-        $this->totalTime = $totalTime;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTotalTime()
-    {
-        return $this->totalTime;
     }
 
     /**

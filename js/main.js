@@ -1,16 +1,16 @@
 $(function () {
 
-    function resetActiveTd() {
-        $('td').each(function () {
-            $(this).removeClass('activeTd');
+    function resetActiveField() {
+        $('td, .entry').each(function () {
+            $(this).removeClass('activeField');
         })
     }
 
     function updateEditedField() {
         var span = $('#editDone');
-        var activeTd = $('.activeTd');
-        activeTd.html(span.siblings().val());
-        activeTd.removeClass('activeTd');
+        var activeField = $('.activeField');
+        activeField.html(span.siblings().val());
+        activeField.removeClass('activeField');
         span.parent().hide();
     }
 
@@ -18,6 +18,20 @@ $(function () {
     if (flash.is(':visible')) {
         flash.setRemoveTimeout(5000);
     }
+
+    $('.entry').on('mouseenter mouseleave', function () {
+        var entry = $(this);
+        if (entry.children('.entryValue').text() != '')
+            $(this).toggleClass('highlighted');
+    });
+
+    $('.entryValue').each(function () {
+        var span = $(this);
+        if (span.text() != '')
+            span.parent().on('hover', function () {
+                $(this).css('background', '#aaa');
+            });
+    });
 
     $('#addWorkerToggle').on('click', function () {
         $('#addWorkers').slideToggle();
@@ -51,9 +65,6 @@ $(function () {
             }
             window.location.href = baseUrl + '/schedule/from/' + start + '/to/' + end;
         }
-    });
-
-    $('form .datetimeInput').datetimepicker({
     });
 
     $('#dateRangeStart, #dateRangeEnd').datetimepicker({
@@ -117,41 +128,44 @@ $(function () {
         return false;
     });
 
-    $('#editPanel .datetimeInput').datetimepicker({
-        datepicker: false,
-        format: 'H:i'
+    $('#editPanel').find('.datetimeInput').each(function () {
+        $(this).datetimepicker({
+            datepicker: false,
+            format: 'H:i'
+        });
     });
 
-    $(document).on('dblclick', '#scheduleTable td', function (e) {
-        var td = $(this);
-        if (!td.hasClass('activeTd') && !td.hasClass('delete')) {
-            resetActiveTd();
-            if (td.html() != "") {
-                td.addClass('activeTd');
-                var editPanel = $('#editPanel');
-                var position = td.position();
-                var width = td.outerWidth();
-                editPanel.css('width', width - 1);
-                editPanel.css('margin-left', position.left).show();
-                editPanel.css('top', position.top + td.outerHeight());
-                editPanel.find('select[name="entry[worker]"] option').each(function () {
-                    var option = $(this);
-                    if (option.text() == td.children('.worker').text()) option.attr('selected', 'selected');
-                });
-                editPanel.find('input[name="entry[startTime]"]').val(td.children('.startTime').text());
-                editPanel.find('input[name="entry[endTime]"]').val(td.children('.endTime').text());
-                editPanel.find('input[name="entry[totalTime]"]').val(td.children('.totalTime').text());
-                editPanel.find('input[name="entry[extraTime]"]').val(td.children('.extraTime').text());
-                $('#editPanel input, #editPanel select').css("width", width - 10);
+
+    $('form .datetimeInput').datetimepicker({
+    });
+
+    $(document).on('dblclick', '#scheduleTable .entry', function (e) {
+        var entry = $(this);
+        if (!entry.hasClass('activeField') && !entry.hasClass('delete')) {
+            resetActiveField();
+            entry.addClass('activeField');
+            var editPanel = $('#editPanel');
+            editPanel.find('input').val('');
+            var position = entry.position();
+            var width = entry.outerWidth() < 100 ? 100 : entry.outerWidth();
+            editPanel.css({
+                'width': width - 1,
+                'margin-left': position.left,
+                'top': position.top + entry.outerHeight()
+            }).show();
+            if (entry.children('.entryValue').html() != '') {
+                editPanel.find('input[name="entry[startTime]"]').val(entry.children('.startTime').text());
+                editPanel.find('input[name="entry[endTime]"]').val(entry.children('.endTime').text());
             }
+            $('#editPanel input, #editPanel select').css("width", width - 10);
         }
     });
 
     $(document).on('dblclick', '.editableTable td', function () {
         var td = $(this);
-        if (!td.hasClass('activeTd') && !td.hasClass('delete')) {
-            resetActiveTd();
-            td.addClass('activeTd');
+        if (!td.hasClass('activeField') && !td.hasClass('delete')) {
+            resetActiveField();
+            td.addClass('activeField');
             var content = td.text();
             var editPanel = $('#editPanel');
             var textArea = editPanel.children('textarea');
@@ -203,23 +217,22 @@ $(function () {
     $(document).on('click', '#formEditDone', function () {
         var span = $(this);
         var editPanel = span.parent();
-        var activeTd = $('.activeTd');
-        activeTd.removeClass('activeTd');
+        var activeField = $('.activeField');
+        activeField.removeClass('activeField');
         var exception = editPanel.find('select[name="entry[exception]"] option:selected').text();
         var startTime = editPanel.find('input[name="entry[startTime]"]').val();
         var endTime = editPanel.find('input[name="entry[endTime]"]').val();
-        activeTd.find('.exception').html(exception);
-        activeTd.find('.startTime').html(startTime);
-        activeTd.find('.endTime').html(endTime);
-        activeTd.find('.totalTime').html(editPanel.find('input[name="entry[totalTime]"]').val());
-        activeTd.find('.extraTime').html(editPanel.find('input[name="entry[extraTime]"]').val());
+        if(startTime == "")
+        activeField.find('.exception').html(exception);
+        activeField.find('.startTime').html(startTime);
+        activeField.find('.endTime').html(endTime);
         if (exception != "None") {
-            activeTd.children('.entryValue').html(exception);
+            activeField.children('.entryValue').html(exception);
         } else {
-            activeTd.children('.entryValue').html(startTime + ' - ' + endTime);
+            activeField.children('.entryValue').html(startTime + ' - ' + endTime);
         }
 
-        span.parent().hide();
+        editPanel.hide();
     });
 
     $('#saveChanges').on('click', function () {
@@ -248,24 +261,21 @@ $(function () {
         } else {
             table = $('#scheduleTable');
             id = "schedule";
-            table.find('tbody td').each(function () {
+            table.find('tbody .entry').each(function () {
                 var entity = {};
-                var td = $(this);
-                if (td.text() != '') {
-                    entity["entryId"] = td.children('.entryId').text();
-                    if (entity["entryId"] != "") {
-                        entity["surname"] = td.children('.worker').text();
-                        entity["exception"] = td.children('.exception').text();
-                        entity["startTime"] = td.children('.startDate').text() + " " + td.children('.startTime').text();
-                        entity["endTime"] = td.children('.endDate').text() + " " + td.children('.endTime').text();
-                        entity["totalTime"] = td.children('.totalTime').text();
-                        entity["extraTime"] = td.children('.extraTime').text();
-                        entities.push(entity);
-                    }
+                var entry = $(this);
+                if ($.trim(entry.children('.entryValue').html()) != "-" && entry.children('.workerName').length == 0) {
+                    var entryId = entry.children('.entryId');
+                    entity["entryId"] = entryId.length != 0 ? entryId.text() : 0;
+                    entity["workerId"] = entry.children('.workerId').text();
+                    entity["exception"] = entry.children('.exception').text();
+                    entity["startTime"] = entry.children('.startDate').text() + " " + entry.children('.startTime').text();
+                    entity["endTime"] = entry.children('.endDate').text() + " " + entry.children('.endTime').text();
+                    entities.push(entity);
                 }
             });
-            console.log(entities);
         }
+        console.log(entities);
         $.ajax({
             url: baseUrl + '/' + id + '/save',
             type: "POST",

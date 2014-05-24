@@ -43,16 +43,6 @@ class AddWorkerFieldset extends Fieldset implements InputFilterProviderInterface
         ));
 
         $this->add(array(
-            'name' => 'username',
-            'type' => 'text',
-        ));
-
-        $this->add(array(
-            'name' => 'password',
-            'type' => 'password',
-        ));
-
-        $this->add(array(
             'name' => 'email',
             'type' => 'email',
         ));
@@ -80,6 +70,17 @@ class AddWorkerFieldset extends Fieldset implements InputFilterProviderInterface
         $this->add(array(
             'name' => 'hireDate',
             'type' => 'text',
+            'attributes' => array(
+                'class' => 'datetimeInput'
+            ),
+        ));
+
+        $this->add(array(
+            'name' => 'releaseDate',
+            'type' => 'text',
+            'attributes' => array(
+                'class' => 'datetimeInput'
+            ),
         ));
 
         $this->add(array(
@@ -143,52 +144,6 @@ class AddWorkerFieldset extends Fieldset implements InputFilterProviderInterface
                     array('name' => 'StripTags')
                 )
             ),
-            'username' => array(
-                'required' => true,
-                'validators' => array(
-                    array(
-                        'name' => 'NotEmpty',
-                        'break_chain_on_failure' => true,
-                        'options' => array(
-                            'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_USERNAME_EMPTY)
-                            )
-                        )
-                    ),
-                ),
-                'filters' => array(
-                    array('name' => 'StringTrim'),
-                    array('name' => 'StripTags')
-                )
-            ),
-            'password' => array(
-                'required' => true,
-                'validators' => array(
-                    array(
-                        'name' => 'NotEmpty',
-                        'break_chain_on_failure' => true,
-                        'options' => array(
-                            'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_PASSWORD_EMPTY)
-                            )
-                        )
-                    ),
-                    array(
-                        'name' => 'StringLength',
-                        'break_chain_on_failure' => true,
-                        'options' => array(
-                            'min' => 4,
-                            'messages' => array(
-                                \Zend\Validator\StringLength::TOO_SHORT => $this->translator->translate(self::ERROR_PASSWORD_INVALID_LENGTH)
-                            )
-                        )
-                    ),
-                ),
-                'filters' => array(
-                    array('name' => 'StringTrim'),
-                    array('name' => 'StripTags')
-                )
-            ),
             'email' => array(
                 'required' => false,
                 'validators' => array(
@@ -236,6 +191,13 @@ class AddWorkerFieldset extends Fieldset implements InputFilterProviderInterface
                 )
             ),
             'hireDate' => array(
+                'required' => false,
+                'filters' => array(
+                    array('name' => 'StringTrim'),
+                    array('name' => 'StripTags')
+                )
+            ),
+            'releaseDate' => array(
                 'required' => false,
                 'filters' => array(
                     array('name' => 'StringTrim'),

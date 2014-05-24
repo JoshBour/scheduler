@@ -37,8 +37,6 @@
             <th>Exception</th>
             <th>Start Time*</th>
             <th>End Time*</th>
-            <th>Total Time*</th>
-            <th>Extra Time</th>
             <th>Add</th>
         </tr>
         </thead>
@@ -69,18 +67,6 @@
                 ?>
             </td>
             <td>
-                <?php
-                echo $this->formInput($fieldset->get('totalTime'));
-                echo $this->formElementErrors($fieldset->get('totalTime'), array('class' => 'formError'));
-                ?>
-            </td>
-            <td>
-                <?php
-                echo $this->formInput($fieldset->get('extraTime'));
-                echo $this->formElementErrors($fieldset->get('extraTime'), array('class' => 'formError'));
-                ?>
-            </td>
-            <td>
                 <?php echo $this->formSubmit($form->get('submit')->setValue($this->translate('Add'))); ?>
             </td>
         </tr>
@@ -105,34 +91,29 @@
     </tr>
     </thead>
     <tbody>
-    <?php foreach ($dates as $worker => $dates): ?>
+    <?php
+    foreach ($dates as $id => $dates):
+        $decodedId = \Worker\Entity\Worker::decodeId($id);
+        ?>
         <tr>
-            <td><?php echo $worker; ?></td>
-            <?php foreach ($dates as $date => $entry): ?>
-                <?php if (!empty($entry)): ?>
-                    <td>
-                        <span class="invisible entryId"><?php echo $entry->getEntryId(); ?></span>
-                        <span class="invisible worker"><?php echo $entry->getWorker()->getSurname(); ?></span>
-                        <span class="invisible exception"></span>
-                        <span class="invisible startDate"><?php echo $entry->getStartTime()->format('d-m-Y'); ?></span>
-                        <span class="invisible startTime"><?php echo $entry->getStartTime()->format('H:i'); ?></span>
-                        <span class="invisible endDate"><?php echo $entry->getEndTime()->format('d-m-Y'); ?></span>
-                        <span class="invisible endTime"><?php echo $entry->getEndTime()->format('H:i'); ?></span>
-                        <span class="invisible totalTime"><?php echo $entry->getTotalTime(); ?></span>
-                        <span class="invisible extraTime"><?php echo $entry->getExtraTime(); ?></span>
-                        <span class="entryValue">
-                        <?php
-                        if ($entry->getException() === null) {
-                            echo $entry->getStartTime()->format('H:i') . ' - ' . $entry->getEndTime()->format('H:i');
+            <td style="padding:10px;"><span class="workerName"><?php echo $decodedId["workerFullName"]; ?></span></td>
+            <?php
+            foreach ($dates as $date => $entry):
+                ?>
+                <td>
+                    <?php
+                    if (!empty($entry)) {
+                        if (is_array($entry)) {
+                            foreach ($entry as $childEntry)
+                                echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => $childEntry));
                         } else {
-                            echo $entry->getException()->getName();
+                            echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => $entry));
                         }
-                        ?>
-                        </span>
-                    </td>
-                <?php else: ?>
-                    <td></td>
-                <?php endif; ?>
+                    } else {
+                        echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => "", "date" => $date));
+                    }
+                    ?>
+                </td>
             <?php endforeach; ?>
         </tr>
     <?php endforeach; ?>
@@ -165,20 +146,6 @@
         echo $this->formLabel($fieldset->get('endTime'));
         echo $this->formInput($fieldset->get('endTime'));
         echo $this->formElementErrors($fieldset->get('endTime'), array('class' => 'formError'));
-        ?>
-    </div>
-    <div class="element">
-        <?php
-        echo $this->formLabel($fieldset->get('totalTime'));
-        echo $this->formInput($fieldset->get('totalTime'));
-        echo $this->formElementErrors($fieldset->get('totalTime'), array('class' => 'formError'));
-        ?>
-    </div>
-    <div class="element">
-        <?php
-        echo $this->formLabel($fieldset->get('extraTime'));
-        echo $this->formInput($fieldset->get('extraTime'));
-        echo $this->formElementErrors($fieldset->get('extraTime'), array('class' => 'formError'));
         ?>
     </div>
     <?php

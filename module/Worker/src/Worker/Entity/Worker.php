@@ -29,16 +29,6 @@ class Worker {
     private $workerId;
 
     /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $username;
-
-    /**
-     * @ORM\Column(type="string", length=128)
-     */
-    private $password;
-
-    /**
      * @ORM\OneToMany(targetEntity="\Schedule\Entity\Entry", mappedBy="worker")
      */
     private $entries;
@@ -84,6 +74,11 @@ class Worker {
     private $hireDate;
 
     /**
+     * @ORM\Column(type="datetime", name="release_date", nullable=true)
+     */
+    private $releaseDate;
+
+    /**
      * @ORM\Column(type="string", length=10, name="work_hours", nullable=true)
      */
     private $workHours;
@@ -121,8 +116,18 @@ class Worker {
         return ($worker->getPassword() === crypt($password . self::HASH_SALT, $worker->getPassword()));
     }
 
+    public static function decodeId($id){
+        $split = explode(':',$id);
+        $fullName = explode('-',$split[1]);
+        return array("workerId"=>$split[0],"workerFullName"=>$fullName[0] . ' ' . $fullName[1]);
+    }
+
     public function __construct(){
         $this->entries = new ArrayCollection();
+    }
+
+    public function getEncodedId(){
+        return $this->workerId . ':' . $this->name . '-' . $this->surname;
     }
 
     public function getFullName(){
@@ -198,7 +203,7 @@ class Worker {
      */
     public function setHireDate($hireDate)
     {
-        if(!($hireDate instanceof \DateTime)){
+        if(!($hireDate instanceof \DateTime) && $hireDate != null){
             $hireDate = new \DateTime($hireDate);
         }
         $this->hireDate = $hireDate;
@@ -277,6 +282,25 @@ class Worker {
     }
 
     /**
+     * @param mixed $releaseDate
+     */
+    public function setReleaseDate($releaseDate)
+    {
+        if(!($releaseDate instanceof \DateTime) && $releaseDate != null){
+            $releaseDate = new \DateTime($releaseDate);
+        }
+        $this->releaseDate = $releaseDate;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReleaseDate()
+    {
+        return $this->releaseDate;
+    }
+
+    /**
      * @param mixed $salary
      */
     public function setSalary($salary)
@@ -322,22 +346,6 @@ class Worker {
     public function getSurname()
     {
         return $this->surname;
-    }
-
-    /**
-     * @param mixed $username
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getUsername()
-    {
-        return $this->username;
     }
 
     /**
