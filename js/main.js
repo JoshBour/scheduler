@@ -153,7 +153,7 @@ $(function () {
                 var input = $('<input type="text" id="mydate" value="' + content + '"></input>');
                 textArea.replaceWith(input);
                 editPanel.css('width', width - 1);
-                input.css('width', width - 10);
+                input.css('width', width - 10).focus();
                 editPanel.children('input').datetimepicker({
                     timepicker: false,
                     format: 'd-m-Y',
@@ -166,7 +166,7 @@ $(function () {
                 } else {
                     textArea.val(content);
                 }
-                textArea.css('width', width - 10);
+                textArea.css('width', width - 10).focus();
             }
         }
     });

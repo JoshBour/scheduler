@@ -39,8 +39,8 @@ class Worker implements ServiceManagerAwareInterface
         $form->bind($worker);
         $form->setData($data);
         if (!$form->isValid()) return false;
-        if($data['hireDate'] == null) $worker->setHireDate(null);
-        if($data['releaseDate'] == null) $worker->setReleaseDate(null);
+        if($data['worker']['hireDate'] == null) $worker->setHireDate(null);
+        if($data['worker']['releaseDate'] == null) $worker->setReleaseDate(null);
         try {
             $em->persist($worker);
             $em->flush();

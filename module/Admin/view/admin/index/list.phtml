@@ -75,7 +75,7 @@
             <td class="adminAdminId invisible"><?php echo $admin->getAdminId(); ?></td>
             <td class="adminUsername editText"><?php echo $admin->getUsername(); ?></td>
             <td class="adminPassword editText">**********</td>
-            <td class="adminWorker editText"><?php echo is_null($admin->getRelatedWorker()) ? '':$admin->getRelatedWorker()->getFullName(); ?></td>
+            <td class="adminRelatedWorker editText"><?php echo is_null($admin->getRelatedWorker()) ? '':$admin->getRelatedWorker()->getFullName(); ?></td>
             <td class="delete">X</td>
         </tr>
     <?php endforeach; ?>

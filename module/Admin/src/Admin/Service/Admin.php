@@ -57,18 +57,18 @@ class Admin implements ServiceManagerAwareInterface
      * @param $entities
      * @return bool
      */
-    public function save($entities){
+    public function save($entities)
+    {
         $em = $this->getEntityManager();
         $adminRepository = $this->getAdminRepository();
         foreach ($entities as $entity) {
             $admin = $adminRepository->find($entity['AdminId']);
-            $password = $entity['AdminPassword'];
             array_shift($entity);
-            foreach ($entity as $key => $value) {
-                if (!empty($value))
-                    $admin->{'set' . $key}($value);
-            }
-            $admin->setPassword(AdminEntity::getHashedPassword($password));
+            $admin->setUsername($entity['Username']);
+            if ($entity['Password'] != '**********')
+                $admin->setPassword(AdminEntity::getHashedPassword($entity['Password']));
+            if (!empty($entity['RelatedWorker']))
+                $admin->setRelatedWorker($entity['RelatedWorker']);
             $em->persist($admin);
         }
         try {

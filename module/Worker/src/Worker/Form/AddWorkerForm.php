@@ -43,6 +43,7 @@ class AddWorkerForm extends Form{
                 'hireDate',
                 'releaseDate',
                 'workHours',
+                'salary',
                 'notes',
             )
         ));
