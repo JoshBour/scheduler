@@ -5,7 +5,7 @@
  * Time: 6:13 μμ
  */
 
-namespace Admin\Plugin;
+namespace Application\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 
@@ -18,17 +18,17 @@ class ActiveAdmin extends AbstractPlugin{
     private $authService;
 
     public function __invoke(){
-       return $this->getAccount();
+       return $this->getAdmin();
     }
 
     /**
      * @return bool|\Admin\Entity\Admin
      */
-    public function getAccount(){
+    public function getAdmin(){
         $em = $this->getEntityManager();
         $auth = $this->getAuthService();
         if($auth->hasIdentity()){
-            $account = $em->getRepository('Admin\Entity\Admin')->find($auth->getIdentity()->getAccountId());
+            $account = $em->getRepository('Admin\Entity\Admin')->find($auth->getIdentity()->getAdminId());
         }else{
             $account = false;
         }

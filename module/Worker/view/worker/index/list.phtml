@@ -9,7 +9,7 @@
         Reset
     </span>
 </div>
-<div id="addWorkers"<?php echo $hideForm ? ' class="invisible"':'';?>>
+<div id="addWorkers"<?php echo $hideForm ? ' class="invisible"' : ''; ?>>
     <?php
     $form->prepare();
     $form->setAttribute('action', $this->url('workers/add'));
@@ -120,6 +120,10 @@
 </div>
 <table id="workers" class="editableTable">
     <caption>Worker List</caption>
+    <?php
+    for ($i = 0; $i < 13; $i++)
+        echo '<colgroup></colgroup>';
+    ?>
     <thead>
     <tr>
         <th>Name</th>
@@ -152,8 +156,8 @@
             <td class="workerAddress editText"><?php echo $worker->getAddress(); ?></td>
             <td class="workerFirstTelephone editText"><?php echo $worker->getFirstTelephone(); ?></td>
             <td class="workerSecondTelephone editText"><?php echo $worker->getSecondTelephone(); ?></td>
-            <td class="workerHireDate editDatetime"><?php echo is_null($worker->getHireDate()) ? '': $worker->getHireDate()->format('d-m-Y'); ?></td>
-            <td class="workerReleaseDate editDatetime"><?php echo is_null($worker->getReleaseDate()) ? '': $worker->getReleaseDate()->format('d-m-Y'); ?></td>
+            <td class="workerHireDate editDatetime"><?php echo is_null($worker->getHireDate()) ? '' : $worker->getHireDate()->format('d-m-Y'); ?></td>
+            <td class="workerReleaseDate editDatetime"><?php echo is_null($worker->getReleaseDate()) ? '' : $worker->getReleaseDate()->format('d-m-Y'); ?></td>
             <td class="workerWorkHours editText"><?php echo $worker->getWorkHours(); ?></td>
             <td class="workerSalary editText"><?php echo $worker->getSalary(); ?></td>
             <td class="workerNotes editText"><?php echo $worker->getNotes(); ?></td>

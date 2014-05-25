@@ -97,6 +97,16 @@ return array(
                     )
                 )
             ),
+            'changelogs' => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route' => '/changelog[/from/:startDate/to/:endDate]',
+                    'defaults' => array(
+                        'controller' => __NAMESPACE__ . '\Controller\Changelog',
+                        'action' => 'list',
+                    ),
+                ),
+            ),
         ),
     ),
     'service_manager' => array(
@@ -106,13 +116,15 @@ return array(
         ),
         'invokables' => array(
             'entry_service' => __NAMESPACE__ . '\Service\Entry',
-            'exception_service' => __NAMESPACE__ . '\Service\Exception'
+            'exception_service' => __NAMESPACE__ . '\Service\Exception',
+            'changelog_service' => __NAMESPACE__ . '\Service\Changelog'
         )
     ),
     'controllers' => array(
         'invokables' => array(
             __NAMESPACE__ . '\Controller\Index' => __NAMESPACE__ . '\Controller\IndexController',
-            __NAMESPACE__ . '\Controller\Exception' => __NAMESPACE__ . '\Controller\ExceptionController'
+            __NAMESPACE__ . '\Controller\Exception' => __NAMESPACE__ . '\Controller\ExceptionController',
+            __NAMESPACE__ . '\Controller\Changelog' => __NAMESPACE__ . '\Controller\ChangelogController'
         ),
     ),
     'view_manager' => array(

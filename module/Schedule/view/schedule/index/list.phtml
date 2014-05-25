@@ -2,14 +2,14 @@
     <span id="dateRangeToggle">
         Select Date Range
     </span>
-    <?php if($this->identity()): ?>
-    <span id="addEntryToggle">
+    <?php if ($this->identity()): ?>
+        <span id="addEntryToggle">
         + Add New Entry
     </span>
-    <span id="saveChanges">
+        <span id="saveChanges">
         Save
     </span>
-    <span id="resetChanges">
+        <span id="resetChanges">
         Reset
     </span>
     <?php endif; ?>
@@ -22,65 +22,70 @@
     <input type="text" id="dateRangeEnd"/>
     <span class="button">Show</span>
 </div>
-<?php if($this->identity()): ?>
-<div id="addEntry"<?php echo $hideForm ? ' class="invisible"' : ''; ?>>
-    <?php
-    $form->prepare();
-    $form->setAttribute('action', $this->url('schedule_add'));
-    $fieldset = $form->get('entry');
-    echo $this->form()->openTag($form);
-    echo $this->formHidden($form->get('security'));
-    echo $this->formHidden($fieldset->get('entryId'));
-    ?>
-    <table>
-        <caption>Add a New Entry</caption>
-        <thead>
-        <tr>
-            <th>Worker*</th>
-            <th>Exception</th>
-            <th>Start Time*</th>
-            <th>End Time*</th>
-            <th>Add</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                <?php
-                echo $this->formSelect($fieldset->get('worker'));
-                echo $this->formElementErrors($fieldset->get('worker'), array('class' => 'formError'));
-                ?>
-            </td>
-            <td>
-                <?php
-                echo $this->formSelect($fieldset->get('exception'));
-                echo $this->formElementErrors($fieldset->get('exception'), array('class' => 'formError'));
-                ?>
-            </td>
-            <td>
-                <?php
-                echo $this->formInput($fieldset->get('startTime'));
-                echo $this->formElementErrors($fieldset->get('startTime'), array('class' => 'formError'));
-                ?>
-            </td>
-            <td>
-                <?php
-                echo $this->formInput($fieldset->get('endTime'));
-                echo $this->formElementErrors($fieldset->get('endTime'), array('class' => 'formError'));
-                ?>
-            </td>
-            <td>
-                <?php echo $this->formSubmit($form->get('submit')->setValue($this->translate('Add'))); ?>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <?php echo $this->form()->closeTag() ?>
-</div>
+<?php if ($this->identity()): ?>
+    <div id="addEntry"<?php echo $hideForm ? ' class="invisible"' : ''; ?>>
+        <?php
+        $form->prepare();
+        $form->setAttribute('action', $this->url('schedule_add'));
+        $fieldset = $form->get('entry');
+        echo $this->form()->openTag($form);
+        echo $this->formHidden($form->get('security'));
+        echo $this->formHidden($fieldset->get('entryId'));
+        ?>
+        <table>
+            <caption>Add a New Entry</caption>
+            <thead>
+            <tr>
+                <th>Worker*</th>
+                <th>Exception</th>
+                <th>Start Time*</th>
+                <th>End Time*</th>
+                <th>Add</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <?php
+                    echo $this->formSelect($fieldset->get('worker'));
+                    echo $this->formElementErrors($fieldset->get('worker'), array('class' => 'formError'));
+                    ?>
+                </td>
+                <td>
+                    <?php
+                    echo $this->formSelect($fieldset->get('exception'));
+                    echo $this->formElementErrors($fieldset->get('exception'), array('class' => 'formError'));
+                    ?>
+                </td>
+                <td>
+                    <?php
+                    echo $this->formInput($fieldset->get('startTime'));
+                    echo $this->formElementErrors($fieldset->get('startTime'), array('class' => 'formError'));
+                    ?>
+                </td>
+                <td>
+                    <?php
+                    echo $this->formInput($fieldset->get('endTime'));
+                    echo $this->formElementErrors($fieldset->get('endTime'), array('class' => 'formError'));
+                    ?>
+                </td>
+                <td>
+                    <?php echo $this->formSubmit($form->get('submit')->setValue($this->translate('Add'))); ?>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <?php echo $this->form()->closeTag() ?>
+    </div>
 <?php endif; ?>
 <table id="scheduleTable">
     <caption><?php echo $startDate->format('l j F Y'); ?>
         - <?php echo $endDate->format('l j F Y'); ?></caption>
+    <?php
+    $end = $startDate->diff($endDate)->days + 2;
+    for ($i = 0; $i < $end; $i++)
+        echo '<colgroup></colgroup>';
+    ?>
     <thead>
     <tr>
         <th>Workers - Days</th>
@@ -95,66 +100,69 @@
     </tr>
     </thead>
     <tbody>
-    <?php
-    foreach ($dates as $id => $dates):
-        $decodedId = \Worker\Entity\Worker::decodeId($id);
-        ?>
-        <tr>
-            <td style="padding:10px;"><span class="workerName"><?php echo $decodedId["workerFullName"]; ?></span></td>
-            <?php
-            foreach ($dates as $date => $entry):
-                ?>
-                <td>
-                    <?php
-                    if (!empty($entry)) {
-                        if (is_array($entry)) {
-                            foreach ($entry as $childEntry)
-                                echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => $childEntry));
-                        } else {
-                            echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => $entry));
-                        }
-                    } else {
-                        echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => "", "date" => $date));
-                    }
-                    ?>
+    <div class="scroll">
+        <?php
+        foreach ($dates as $id => $dates):
+            $decodedId = \Worker\Entity\Worker::decodeId($id);
+            ?>
+            <tr>
+                <td style="padding:10px;"><span class="workerName"><?php echo $decodedId["workerFullName"]; ?></span>
                 </td>
-            <?php endforeach; ?>
-        </tr>
-    <?php endforeach; ?>
+                <?php
+                foreach ($dates as $date => $entry):
+                    ?>
+                    <td>
+                        <?php
+                        if (!empty($entry)) {
+                            if (is_array($entry)) {
+                                foreach ($entry as $childEntry)
+                                    echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => $childEntry));
+                            } else {
+                                echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => $entry));
+                            }
+                        } else {
+                            echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => "", "date" => $date));
+                        }
+                        ?>
+                    </td>
+                <?php endforeach; ?>
+            </tr>
+        <?php endforeach; ?>
+    </div>
     </tbody>
 </table>
-<?php if($this->identity()): ?>
-<div id="editPanel">
-    <?php
-    $form->prepare();
-    $form->setAttribute('action', $this->url('schedule_save'));
-    $fieldset = $form->get('entry');
-    echo $this->form()->openTag($form);
-    echo $this->formHidden($fieldset->get('entryId'));
-    ?>
-    <div class="element">
+<?php if ($this->identity()): ?>
+    <div id="editPanel">
         <?php
-        echo $this->formLabel($fieldset->get('exception'));
-        echo $this->formSelect($fieldset->get('exception'));
-        echo $this->formElementErrors($fieldset->get('exception'), array('class' => 'formError'));
+        $form->prepare();
+        $form->setAttribute('action', $this->url('schedule_save'));
+        $fieldset = $form->get('entry');
+        echo $this->form()->openTag($form);
+        echo $this->formHidden($fieldset->get('entryId'));
         ?>
-    </div>
-    <div class="element">
+        <div class="element">
+            <?php
+            echo $this->formLabel($fieldset->get('exception'));
+            echo $this->formSelect($fieldset->get('exception'));
+            echo $this->formElementErrors($fieldset->get('exception'), array('class' => 'formError'));
+            ?>
+        </div>
+        <div class="element">
+            <?php
+            echo $this->formLabel($fieldset->get('startTime'));
+            echo $this->formInput($fieldset->get('startTime'));
+            echo $this->formElementErrors($fieldset->get('startTime'), array('class' => 'formError'));
+            ?>
+        </div>
+        <div class="element">
+            <?php
+            echo $this->formLabel($fieldset->get('endTime'));
+            echo $this->formInput($fieldset->get('endTime'));
+            echo $this->formElementErrors($fieldset->get('endTime'), array('class' => 'formError'));
+            ?>
+        </div>
         <?php
-        echo $this->formLabel($fieldset->get('startTime'));
-        echo $this->formInput($fieldset->get('startTime'));
-        echo $this->formElementErrors($fieldset->get('startTime'), array('class' => 'formError'));
-        ?>
+        echo $this->form()->closeTag() ?>
+        <span id="formEditDone">Done</span>
     </div>
-    <div class="element">
-        <?php
-        echo $this->formLabel($fieldset->get('endTime'));
-        echo $this->formInput($fieldset->get('endTime'));
-        echo $this->formElementErrors($fieldset->get('endTime'), array('class' => 'formError'));
-        ?>
-    </div>
-    <?php
-    echo $this->form()->closeTag() ?>
-    <span id="formEditDone">Done</span>
-</div>
-<?php endif;?>
+<?php endif; ?>

@@ -164,6 +164,7 @@
         color: #333;
     }
 
+    .hover { background-color: #eee; }
 
     #content{
         min-height:400px;
@@ -183,6 +184,14 @@
         border-left:1px solid #bbb;
     }
 
+    th.topless{
+        border-top:none;
+    }
+
+    th.bottomless{
+        border-bottom:none;
+    }
+
     td{
         vertical-align: middle;
         padding:10px;
@@ -194,10 +203,6 @@
 
     table>tbody>tr>td {
         height: 100%;
-    }
-
-    td:hover{
-        background: #efefef;
     }
 
     .activeField{
@@ -409,6 +414,7 @@
 /*                    Common Classes                     */
 
     .invisible{display:none;}
+    .blackBorder{border-right:2px solid #777}
     .button{
         padding: 8px 20px;
         background: #F1F1F4 url(../images/secondary_bar.png) repeat-x;

@@ -6,9 +6,9 @@
  * Time: 8:15 μμ
  */
 
-namespace Admin\Factory;
+namespace Application\Factory;
 
-use Admin\Plugin\ActiveAdmin;
+use Application\Plugin\ActiveAdmin;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

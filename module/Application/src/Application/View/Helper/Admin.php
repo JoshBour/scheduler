@@ -5,7 +5,7 @@
  * Time: 7:14 μμ
  */
 
-namespace Admin\View\Helper;
+namespace Application\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 
@@ -19,17 +19,17 @@ class Admin extends AbstractHelper
     private $authService;
 
     public function __invoke(){
-        return $this->getAccount();
+        return $this->getAdmin();
     }
 
     /**
      * @return bool|\Admin\Entity\Admin
      */
-    public function getAccount(){
+    public function getAdmin(){
         $em = $this->getEntityManager();
         $auth = $this->getAuthService();
         if($auth->hasIdentity()){
-            $account = $em->getRepository('Account\Entity\Account')->find($auth->getIdentity()->getAccountId());
+            $account = $em->getRepository('Admin\Entity\Admin')->find($auth->getIdentity()->getAdminId());
         }else{
             $account = false;
         }

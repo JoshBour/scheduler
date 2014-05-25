@@ -8,7 +8,7 @@
 
 namespace Application\Factory;
 
-use Admin\View\Helper\Admin;
+use Application\View\Helper\Admin;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

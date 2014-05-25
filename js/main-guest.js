@@ -9,6 +9,18 @@ $(function () {
         $('#dateRange').slideToggle();
     });
 
+    $('td').on('mouseover mouseout',function(){
+        var cols = $('colgroup');
+        var i = $(this).prevAll('td').length-1;
+        if($('body').hasClass('schedulePage')) i++;
+        console.log(i);
+        $(this).parent().toggleClass('hover')
+        $(cols[i]).toggleClass('hover');
+    })
+
+    $('table').on('mouseleave',function(){
+        $('colgroup').removeClass('hover');
+    });
 
     $('#dateRange .button').on('click', function () {
         var start = $('#dateRangeStart').val();

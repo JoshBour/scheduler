@@ -14,6 +14,7 @@ $(function () {
         span.parent().hide();
     }
 
+    var body = $('body');
     var flash = $('#flash');
     if (flash.is(':visible')) {
         flash.setRemoveTimeout(5000);
@@ -51,6 +52,19 @@ $(function () {
 
     $('#addExceptionToggle').on('click', function () {
         $('#addException').slideToggle();
+    });
+
+    $('td').on('mouseover mouseout',function(){
+        var cols = $('colgroup');
+        var i = $(this).prevAll('td').length-1;
+        console.log(i);
+        if(body.hasClass('schedulePage') || body.hasClass('changelogPage')) i++;
+        $(this).parent().toggleClass('hover')
+        $(cols[i]).toggleClass('hover');
+    })
+
+    $('table').on('mouseleave',function(){
+        $('colgroup').removeClass('hover');
     });
 
     $('#dateRange .button').on('click', function () {
@@ -114,7 +128,7 @@ $(function () {
             resetActiveField();
             entry.addClass('activeField');
             var editPanel = $('#editPanel');
-            editPanel.find('input').val('');
+            editPanel.find('input, select').val('');
             var position = entry.position();
             var width = entry.outerWidth() < 100 ? 100 : entry.outerWidth();
             editPanel.css({

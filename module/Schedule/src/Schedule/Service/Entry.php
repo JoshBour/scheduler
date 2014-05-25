@@ -18,6 +18,8 @@ class Entry implements ServiceManagerAwareInterface
 
     private $addEntryForm;
 
+    private $changelogService;
+
     private $entityManager;
 
     private $entryRepository;
@@ -50,8 +52,12 @@ class Entry implements ServiceManagerAwareInterface
         } else {
             $entry->setException(null);
         }
+        $changelog = $this->getChangelogService()->create(new EntryEntity(),$entry);
         try {
             $em->persist($entry);
+            if($changelog){
+                $em->persist($changelog);
+            }
             $em->flush();
             return true;
         } catch (\Exception $e) {
@@ -67,6 +73,7 @@ class Entry implements ServiceManagerAwareInterface
         $em = $this->getEntityManager();
         foreach ($entities as $entity) {
             $entry = empty($entity["entryId"]) ? new EntryEntity() : $entryRepository->find($entity["entryId"]);
+            $oldEntry = clone $entry;
             $worker = $workerRepository->find($entity["workerId"]);
             if (!empty($entity["exception"])) {
                 $exception = $this->getExceptionRepository()->findOneBy(array('name' => $entity["exception"]));
@@ -84,6 +91,9 @@ class Entry implements ServiceManagerAwareInterface
                 $entry->setEndTime($entity["endTime"]);
             }
             $em->persist($entry);
+            if($changelog = $this->getChangelogService()->create($oldEntry,$entry)){
+                $em->persist($changelog);
+            }
         }
         try {
             $em->flush();
@@ -104,6 +114,17 @@ class Entry implements ServiceManagerAwareInterface
         if (null === $this->addEntryForm)
             $this->addEntryForm = $this->getServiceManager()->get('entry_add_form');
         return $this->addEntryForm;
+    }
+
+    /**
+     * Get the changelog service
+     *
+     * @return Changelog
+     */
+    public function getChangelogService(){
+        if(null === $this->changelogService)
+            $this->changelogService = $this->getServiceManager()->get('changelog_service');
+        return $this->changelogService;
     }
 
     /**
