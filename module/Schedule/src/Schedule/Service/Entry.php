@@ -52,10 +52,10 @@ class Entry implements ServiceManagerAwareInterface
         } else {
             $entry->setException(null);
         }
-        $changelog = $this->getChangelogService()->create(new EntryEntity(),$entry);
+        $changelog = $this->getChangelogService()->create(new EntryEntity(), $entry);
         try {
             $em->persist($entry);
-            if($changelog){
+            if ($changelog) {
                 $em->persist($changelog);
             }
             $em->flush();
@@ -66,33 +66,47 @@ class Entry implements ServiceManagerAwareInterface
         }
     }
 
+    /**
+     * Update and save the entities
+     *
+     * @param array $entities
+     * @return bool
+     */
     public function save($entities)
     {
         $entryRepository = $this->getEntryRepository();
         $workerRepository = $this->getWorkerRepository();
         $em = $this->getEntityManager();
         foreach ($entities as $entity) {
-            $entry = empty($entity["entryId"]) ? new EntryEntity() : $entryRepository->find($entity["entryId"]);
-            $oldEntry = clone $entry;
-            $worker = $workerRepository->find($entity["workerId"]);
-            if (!empty($entity["exception"])) {
-                $exception = $this->getExceptionRepository()->findOneBy(array('name' => $entity["exception"]));
-                $entry->setException($exception);
-            }
-            $entry->setWorker($worker);
-            if(empty($entity["startTime"])){
-                $entry->setStartTime(null);
-            }else{
-                $entry->setStartTime($entity["startTime"]);
-            }
-            if(empty($entity["endTime"])){
-                $entry->setEndTime(null);
-            }else{
-                $entry->setEndTime($entity["endTime"]);
-            }
-            $em->persist($entry);
-            if($changelog = $this->getChangelogService()->create($oldEntry,$entry)){
-                $em->persist($changelog);
+            $entryId = $entity["entryId"];
+            $startTime = trim($entity['startTime']);
+            $endTime = trim($entity['endTime']);
+            $exception = trim($entity['exception']);
+            if (!empty($entryId) && empty($startTime) && empty($endTime) && empty($exception)) {
+                $this->remove($entryId, false);
+            } else {
+                $entry = empty($entryId) ? new EntryEntity() : $entryRepository->find($entity["entryId"]);
+                $oldEntry = clone $entry;
+                $worker = $workerRepository->find($entity["workerId"]);
+                if (!empty($exception)) {
+                    $exception = $this->getExceptionRepository()->findOneBy(array('name' => $exception));
+                    $entry->setException($exception);
+                }
+                $entry->setWorker($worker);
+                if (empty($startTime)) {
+                    $entry->setStartTime(null);
+                } else {
+                    $entry->setStartTime($startTime);
+                }
+                if (empty($endTime)) {
+                    $entry->setEndTime(null);
+                } else {
+                    $entry->setEndTime($endTime);
+                }
+                $em->persist($entry);
+                if ($changelog = $this->getChangelogService()->create($oldEntry, $entry)) {
+                    $em->persist($changelog);
+                }
             }
         }
         try {
@@ -102,6 +116,27 @@ class Entry implements ServiceManagerAwareInterface
             echo $e->getMessage();
             return false;
         }
+    }
+
+    /**
+     * Remove an entry
+     *
+     * @param int $entryId
+     * @param bool $flush
+     * @return bool
+     */
+    public function remove($entryId, $flush = true)
+    {
+        $em = $this->getEntityManager();
+        $entry = $this->getEntryRepository()->find($entryId);
+        try {
+            $em->remove($entry);
+            if ($flush)
+                $em->flush();
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -121,8 +156,9 @@ class Entry implements ServiceManagerAwareInterface
      *
      * @return Changelog
      */
-    public function getChangelogService(){
-        if(null === $this->changelogService)
+    public function getChangelogService()
+    {
+        if (null === $this->changelogService)
             $this->changelogService = $this->getServiceManager()->get('changelog_service');
         return $this->changelogService;
     }

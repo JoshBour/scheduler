@@ -349,6 +349,22 @@
             border-bottom:none;
         }
 
+        .schedulePage #editPanel span{
+            width: 49%;
+            float: left;
+            margin-top:20px;
+            padding: 9px 0;
+            border-right: 1px solid #bbb;
+            border-top: 1px solid #bbb;
+            cursor: pointer;
+        }
+
+        .schedulePage #editPanel span:last-child{
+            float:right;
+            border-right:none;
+            border-left:1px solid #bbb;
+        }
+
     /* ===================================================== */
     /*                     Login Page                     */
 

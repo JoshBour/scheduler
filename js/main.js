@@ -54,16 +54,15 @@ $(function () {
         $('#addException').slideToggle();
     });
 
-    $('td').on('mouseover mouseout',function(){
+    $('td').on('mouseover mouseout', function () {
         var cols = $('colgroup');
-        var i = $(this).prevAll('td').length-1;
-        console.log(i);
-        if(body.hasClass('schedulePage') || body.hasClass('changelogPage')) i++;
+        var i = $(this).prevAll('td').length - 1;
+        if (body.hasClass('schedulePage') || body.hasClass('changelogPage')) i++;
         $(this).parent().toggleClass('hover')
         $(cols[i]).toggleClass('hover');
     })
 
-    $('table').on('mouseleave',function(){
+    $('table').on('mouseleave', function () {
         $('colgroup').removeClass('hover');
     });
 
@@ -96,7 +95,7 @@ $(function () {
         var parent = form.parent();
         parent.toggleLoadingImage();
         form.ajaxSubmit({
-            target: '#'+form.attr('id'),
+            target: '#' + form.attr('id'),
             type: "post",
             success: function (responseText) {
                 console.log(responseText);
@@ -130,7 +129,7 @@ $(function () {
             var editPanel = $('#editPanel');
             editPanel.find('input, select').val('');
             var position = entry.position();
-            var width = entry.outerWidth() < 100 ? 100 : entry.outerWidth();
+            var width = entry.outerWidth() < 100 ? 200 : entry.outerWidth();
             editPanel.css({
                 'width': width - 1,
                 'margin-left': position.left,
@@ -197,7 +196,7 @@ $(function () {
         updateEditedField();
     });
 
-    $(document).on('click', '#formEditDone', function () {
+    $(document).on('click', '#formEditDone, #formEditRemove', function () {
         var span = $(this);
         var editPanel = span.parent();
         var activeField = $('.activeField');
@@ -205,16 +204,23 @@ $(function () {
         var exception = editPanel.find('select[name="entry[exception]"] option:selected').text();
         var startTime = editPanel.find('input[name="entry[startTime]"]').val();
         var endTime = editPanel.find('input[name="entry[endTime]"]').val();
-        if(startTime == "")
-        activeField.find('.exception').html(exception);
-        activeField.find('.startTime').html(startTime);
-        activeField.find('.endTime').html(endTime);
-        if (exception != "None") {
-            activeField.children('.entryValue').html(exception);
+        if (span.attr('id') == 'formEditDone') {
+            activeField.find('.exception').html(exception);
+            activeField.find('.startTime').html(startTime);
+            activeField.find('.endTime').html(endTime);
+            if (exception != "None") {
+                activeField.children('.entryValue').html(exception);
+            } else {
+                activeField.children('.entryValue').html(startTime + ' - ' + endTime);
+            }
         } else {
-            activeField.children('.entryValue').html(startTime + ' - ' + endTime);
+            activeField.find('.exception').html("");
+            activeField.find('.startTime').html("");
+            activeField.find('.startDate').html("");
+            activeField.find('.endDate').html("");
+            activeField.find('.endTime').html("");
+            activeField.children('.entryValue').html(" - ");
         }
-
         editPanel.hide();
     });
 
@@ -247,9 +253,10 @@ $(function () {
             table.find('tbody .entry').each(function () {
                 var entity = {};
                 var entry = $(this);
-                if ($.trim(entry.children('.entryValue').html()) != "-" && entry.children('.workerName').length == 0) {
-                    var entryId = entry.children('.entryId');
-                    entity["entryId"] = entryId.length != 0 ? entryId.text() : 0;
+                var entryId = entry.children('.entryId').html();
+                var entryValue = $.trim(entry.children('.entryValue').html());
+                if (!(entryValue == "-" && entryId.length == 0) && entry.children('.workerName').length == 0) {
+                    entity["entryId"] = entryId.length != 0 ? entryId : 0;
                     entity["workerId"] = entry.children('.workerId').text();
                     entity["exception"] = entry.children('.exception').text();
                     entity["startTime"] = entry.children('.startDate').text() + " " + entry.children('.startTime').text();

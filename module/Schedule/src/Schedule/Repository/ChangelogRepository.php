@@ -15,9 +15,10 @@ class ChangelogRepository extends EntityRepository{
     public function findEntriesBetweenDates(\DateTime $startDate, \DateTime $endDate){
         $qb = $this->createQueryBuilder('c');
         $qb->select('c')
-            ->add('from', 'Schedule\Entity\Changelog c LEFT JOIN c.newEntry e')
-            ->where("e.startTime >= :startDate")
-            ->andWhere("e.startTime <= :endDate")
+            ->add('from','Schedule\Entity\Changelog c')
+           # ->add('from', 'Schedule\Entity\Changelog c LEFT JOIN c.newEntry e')
+            ->where("c.oldStartTime >= :startDate")
+            ->andWhere("c.oldStartTime <= :endDate")
             ->setParameter('startDate',$startDate)
             ->setParameter('endDate', $endDate);
 
