@@ -9,7 +9,12 @@ $(function () {
     function updateEditedField() {
         var span = $('#editDone');
         var activeField = $('.activeField');
-        activeField.html(span.siblings().val());
+        var value = span.siblings().val();
+        if(activeField.hasClass('editColor')){
+            value = span.siblings('select').find('option:selected').text();
+            activeField.css('color',value);
+        }
+        activeField.html(value);
         activeField.removeClass('activeField');
         span.parent().hide();
     }
@@ -19,20 +24,6 @@ $(function () {
     if (flash.is(':visible')) {
         flash.setRemoveTimeout(5000);
     }
-
-    $('.entry').on('mouseenter mouseleave', function () {
-        var entry = $(this);
-        if (entry.children('.entryValue').text() != '')
-            $(this).toggleClass('highlighted');
-    });
-
-    $('.entryValue').each(function () {
-        var span = $(this);
-        if (span.text() != '')
-            span.parent().on('hover', function () {
-                $(this).css('background', '#aaa');
-            });
-    });
 
     $('#addWorkerToggle').on('click', function () {
         $('#addWorkers').slideToggle();
@@ -91,22 +82,24 @@ $(function () {
     });
 
     $(document).on('submit', '#addWorkerForm, #addAdminForm, #addEntryForm, #addExceptionForm', function (e) {
-        var form = $(this);
-        var parent = form.parent();
-        parent.toggleLoadingImage();
-        form.ajaxSubmit({
-            target: '#' + form.attr('id'),
-            type: "post",
-            success: function (responseText) {
-                console.log(responseText);
-                if (responseText.redirect) {
-                    location.reload();
+        if (confirm("Are you sure you want to submit the form? All unsaved changes will be lost!")) {
+            var form = $(this);
+            var parent = form.parent();
+            parent.toggleLoadingImage();
+            form.ajaxSubmit({
+                target: '#' + form.attr('id'),
+                type: "post",
+                success: function (responseText) {
+                    console.log(responseText);
+                    if (responseText.redirect) {
+                        location.reload();
+                    }
+                    $('.datetimeInput').datetimepicker({
+                    });
+                    parent.toggleLoadingImage();
                 }
-                $('.datetimeInput').datetimepicker({
-                });
-                parent.toggleLoadingImage();
-            }
-        });
+            });
+        }
         return false;
     });
 
@@ -121,28 +114,6 @@ $(function () {
     $('form .datetimeInput').datetimepicker({
     });
 
-    $(document).on('dblclick', '#scheduleTable .entry', function (e) {
-        var entry = $(this);
-        if (!entry.hasClass('activeField') && !entry.hasClass('delete')) {
-            resetActiveField();
-            entry.addClass('activeField');
-            var editPanel = $('#editPanel');
-            editPanel.find('input, select').val('');
-            var position = entry.position();
-            var width = entry.outerWidth() < 100 ? 200 : entry.outerWidth();
-            editPanel.css({
-                'width': width - 1,
-                'margin-left': position.left,
-                'top': position.top + entry.outerHeight()
-            }).show();
-            if (entry.children('.entryValue').html() != '') {
-                editPanel.find('input[name="entry[startTime]"]').val(entry.children('.startTime').text());
-                editPanel.find('input[name="entry[endTime]"]').val(entry.children('.endTime').text());
-            }
-            $('#editPanel input, #editPanel select').css("width", width - 10);
-        }
-    });
-
     $(document).on('dblclick', '.editableTable td', function () {
         var td = $(this);
         if (!td.hasClass('activeField') && !td.hasClass('delete')) {
@@ -150,7 +121,7 @@ $(function () {
             td.addClass('activeField');
             var content = td.text();
             var editPanel = $('#editPanel');
-            var textArea = editPanel.children('textarea');
+            var editInput = editPanel.children('.editInput');
             var position = td.position();
             var width = td.outerWidth();
             editPanel.css('width', width - 1);
@@ -164,7 +135,7 @@ $(function () {
                     var date = new Date();
                 }
                 var input = $('<input type="text" id="mydate" value="' + content + '"></input>');
-                textArea.replaceWith(input);
+                editInput.replaceWith(input);
                 editPanel.css('width', width - 1);
                 input.css('width', width - 10).focus();
                 editPanel.children('input').datetimepicker({
@@ -172,14 +143,15 @@ $(function () {
                     format: 'd-m-Y',
                     formatDate: 'd-m-Y'
                 });
+            } else if (td.hasClass('editColor')) {
+                var input = $('.colorSelect');
+                input.find('option').filter(function () { return $(this).html() == content; }).attr('selected','selected');
+                editInput.replaceWith(input);
+                input.css('width', width - 10).focus();
             } else {
-                if (textArea.length == 0) {
-                    textArea = $('<textarea>' + content + '</textarea>')
-                    editPanel.children('input').replaceWith(textArea)
-                } else {
-                    textArea.val(content);
-                }
-                textArea.css('width', width - 10).focus();
+                input = $('<textarea>' + content + '</textarea>')
+                editInput.replaceWith(input);
+                input.css('width', width - 10).focus();
             }
         }
     });
@@ -194,34 +166,6 @@ $(function () {
 
     $(document).on('click', '#editDone', function () {
         updateEditedField();
-    });
-
-    $(document).on('click', '#formEditDone, #formEditRemove', function () {
-        var span = $(this);
-        var editPanel = span.parent();
-        var activeField = $('.activeField');
-        activeField.removeClass('activeField');
-        var exception = editPanel.find('select[name="entry[exception]"] option:selected').text();
-        var startTime = editPanel.find('input[name="entry[startTime]"]').val();
-        var endTime = editPanel.find('input[name="entry[endTime]"]').val();
-        if (span.attr('id') == 'formEditDone') {
-            activeField.find('.exception').html(exception);
-            activeField.find('.startTime').html(startTime);
-            activeField.find('.endTime').html(endTime);
-            if (exception != "None") {
-                activeField.children('.entryValue').html(exception);
-            } else {
-                activeField.children('.entryValue').html(startTime + ' - ' + endTime);
-            }
-        } else {
-            activeField.find('.exception').html("");
-            activeField.find('.startTime').html("");
-            activeField.find('.startDate').html("");
-            activeField.find('.endDate').html("");
-            activeField.find('.endTime').html("");
-            activeField.children('.entryValue').html(" - ");
-        }
-        editPanel.hide();
     });
 
     $('#saveChanges').on('click', function () {
@@ -255,12 +199,12 @@ $(function () {
                 var entry = $(this);
                 var entryId = entry.children('.entryId').html();
                 var entryValue = $.trim(entry.children('.entryValue').html());
-                if (!(entryValue == "-" && entryId.length == 0) && entry.children('.workerName').length == 0) {
+                if (!(entryValue == "-" && entryId.length == 0) && entry.children('.workerName').length == 0 && entry.children('.workerPosition').length == 0) {
                     entity["entryId"] = entryId.length != 0 ? entryId : 0;
-                    entity["workerId"] = entry.children('.workerId').text();
-                    entity["exception"] = entry.children('.exception').text();
-                    entity["startTime"] = entry.children('.startDate').text() + " " + entry.children('.startTime').text();
-                    entity["endTime"] = entry.children('.endDate').text() + " " + entry.children('.endTime').text();
+                    entity["workerId"] = entry.children('.workerId').html();
+                    entity["exception"] = entry.children('.exception').html();
+                    entity["startTime"] = entry.children('.startDate').html() + " " + entry.children('.startTime').html();
+                    entity["endTime"] = entry.children('.endDate').html() + " " + entry.children('.endTime').html();
                     entities.push(entity);
                 }
             });
@@ -273,14 +217,109 @@ $(function () {
                 "entities": entities
             }
         }).success(function (data) {
-            console.log(data);
             if (data.success == 1) {
+                location.reload();
             }
             addMessage(data.message);
         }).error(function () {
             addMessage('Something with wrong, please try again.');
         });
     });
+
+    if (body.hasClass('schedulePage')) {
+        var table = $('#scheduleTable');
+        var headersToDisable = [2];
+        var headerCount = 2;
+        var headers = table.find('thead th').each(function () {
+            headersToDisable.push(headerCount++);
+        });
+        headersToDisable.pop();
+        headersToDisable.pop();
+        table.dataTable({
+//            stateSave: true,
+            "aoColumnDefs": [
+                { 'bSortable': false, 'aTargets': headersToDisable }
+            ],
+            "order": [
+                [ 1, "desc" ]
+            ],
+            "pagingType": "full_numbers",
+//            "sScrollY": "650px",
+//        "autoWidth":true,
+            "sScrollX": "100%",
+            "sScrollXInner": "100%",
+            "bScrollCollapse": true
+//        "bPaginate": false,
+////        "bFilter": false,
+//        "bInfo" : false
+        });
+
+        $('.entry').on('mouseenter mouseleave', function () {
+            var entry = $(this);
+            if (entry.children('.entryValue').text() != '')
+                $(this).toggleClass('highlighted');
+        });
+
+        $('.entryValue').each(function () {
+            var span = $(this);
+            if (span.text() != '')
+                span.parent().on('hover', function () {
+                    $(this).css('background', '#aaa');
+                });
+        });
+
+        $(document).on('dblclick', '#scheduleTable .entry', function (e) {
+            var entry = $(this);
+            if (!entry.hasClass('activeField') && !entry.hasClass('delete')) {
+                resetActiveField();
+                var td = entry.parent();
+                entry.addClass('activeField');
+                var editPanel = $('#editPanel');
+                editPanel.find('input, select').val('');
+                var position = td.position();
+                var width = entry.outerWidth() < 100 ? 200 : entry.outerWidth();
+                editPanel.css({
+                    'width': width - 1,
+                    'margin-left': position.left,
+                    'top': position.top + td.outerHeight() + 85
+                }).show();
+                if (entry.children('.entryValue').html() != '') {
+                    editPanel.find('input[name="entry[startTime]"]').val(entry.children('.startTime').text());
+                    editPanel.find('input[name="entry[endTime]"]').val(entry.children('.endTime').text());
+                }
+                $('#editPanel input, #editPanel select').css("width", width - 10);
+            }
+        });
+
+        $(document).on('click', '#formEditDone, #formEditRemove', function () {
+            var span = $(this);
+            var editPanel = span.parent();
+            var activeField = $('.activeField');
+            activeField.removeClass('activeField');
+            var exception = editPanel.find('select[name="entry[exception]"] option:selected').text();
+            var startTime = editPanel.find('input[name="entry[startTime]"]').val();
+            var endTime = editPanel.find('input[name="entry[endTime]"]').val();
+            console.log(exception);
+            if (span.attr('id') == 'formEditDone') {
+                activeField.find('.exception').html(exception);
+                activeField.find('.startTime').html(startTime);
+                activeField.find('.endTime').html(endTime);
+                if (exception != "None") {
+                    activeField.children('.entryValue').html(exception);
+                } else {
+                    activeField.children('.entryValue').html(startTime + ' - ' + endTime);
+                }
+            } else {
+                activeField.find('.exception').html("");
+                activeField.find('.startTime').html("");
+                activeField.find('.startDate').html("");
+                activeField.find('.endDate').html("");
+                activeField.find('.endTime').html("");
+                activeField.children('.entryValue').html(" - ");
+            }
+            editPanel.hide();
+        });
+    }
 
     $('td.delete').on('click', function () {
             if (confirm("Are you sure about this action?")) {

@@ -79,8 +79,8 @@
     </div>
 <?php endif; ?>
 <table id="scheduleTable">
-    <caption><?php echo $startDate->format('l j F Y'); ?>
-        - <?php echo $endDate->format('l j F Y'); ?></caption>
+<!--    <caption>--><?php //echo $startDate->format('l j F Y'); ?>
+<!--        - --><?php //echo $endDate->format('l j F Y'); ?><!--</caption>-->
     <?php
     $end = $startDate->diff($endDate)->days + 2;
     for ($i = 0; $i < $end; $i++)
@@ -88,7 +88,8 @@
     ?>
     <thead>
     <tr>
-        <th>Workers - Days</th>
+        <th>Worker</th>
+        <th>Position</th>
         <?php
         do {
             $interval = $startDate->diff($endDate);
@@ -106,12 +107,12 @@
             $decodedId = \Worker\Entity\Worker::decodeId($id);
             ?>
             <tr>
-                <td style="padding:10px;"><span class="workerName"><?php echo $decodedId["workerFullName"]; ?></span>
+                <td style="padding:10px; background-color:#dedede"><span class="workerName"><?php echo $decodedId["workerFullName"]; ?></span>
+                <td style="padding:10px; background-color:#eeeeee"><span class="workerPosition"><?php echo $decodedId["workerPosition"]; ?></span>
                 </td>
                 <?php
                 foreach ($dates as $date => $entry):
                     ?>
-                    <td>
                         <?php
                         if (!empty($entry)) {
                             if (is_array($entry)) {
@@ -124,7 +125,6 @@
                             echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => "", "date" => $date));
                         }
                         ?>
-                    </td>
                 <?php endforeach; ?>
             </tr>
         <?php endforeach; ?>

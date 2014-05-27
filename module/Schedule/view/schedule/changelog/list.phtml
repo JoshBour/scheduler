@@ -42,17 +42,21 @@
 
     </thead>
     <tbody>
-    <?php foreach ($changelogs as $changelog): ?>
+    <?php foreach ($changelogs as $changelog):
+        $newEntry = $changelog->getNewEntry();
+        $oldException = $changelog->getOldException();
+        $newException = $newEntry->getException();
+        ?>
         <tr>
             <td><?php echo $changelog->getWorker()->getFullName(); ?></td>
             <td><?php echo $changelog->getAdmin()->getUsername(); ?></td>
             <td class="blackBorder"><?php echo $changelog->getChangeTime()->format('d-m-Y H:i'); ?></td>
             <td><?php echo $changelog->getOldStartTime() == null ? ' - ':$changelog->getOldStartTime()->format('d-m-Y H:i'); ?></td>
             <td><?php echo $changelog->getOldEndTime() == null ? ' - ':$changelog->getOldEndTime()->format('d-m-Y H:i'); ?></td>
-            <td class="blackBorder"><?php echo $changelog->getOldException() == null ? " - ":$changelog->getException()->getName(); ?></td>
-            <td><?php echo $changelog->getNewEntry()->getStartTime()->format('d-m-Y H:i'); ?></td>
-            <td><?php echo $changelog->getNewEntry()->getEndTime()->format('d-m-Y H:i'); ?></td>
-            <td><?php echo $changelog->getNewEntry()->getException() == null ? " - ":$changelog->getException()->getName(); ?></td>
+            <td class="blackBorder"<?php echo $oldException==null ? '':' style="color:'.$oldException->getColor().'"'; ?>><?php echo $oldException == null ? " - ":$oldException->getName(); ?></td>
+            <td><?php echo $newEntry->getStartTime()->format('d-m-Y H:i'); ?></td>
+            <td><?php echo $newEntry->getEndTime()->format('d-m-Y H:i'); ?></td>
+            <td<?php echo $newException==null ? '':' style="color:'.$newException->getColor().'"'; ?>><?php echo $newException == null ? " - ":$newException->getName(); ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>

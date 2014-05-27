@@ -9,7 +9,7 @@
         Reset
     </span>
 </div>
-<div id="addException"<?php echo $hideForm ? ' class="invisible"':'';?>>
+<div id="addException"<?php echo $hideForm ? ' class="invisible"' : ''; ?>>
     <?php
     $form->prepare();
     $form->setAttribute('action', $this->url('exceptions/add'));
@@ -22,7 +22,7 @@
         <thead>
         <tr>
             <th>Name*</th>
-            <th>Referenced Date</th>
+            <th>Color*</th>
             <th>Add</th>
         </tr>
         </thead>
@@ -36,8 +36,8 @@
             </td>
             <td>
                 <?php
-                echo $this->formInput($fieldset->get('referencedDate'));
-                echo $this->formElementErrors($fieldset->get('referencedDate'), array('class' => 'formError'));
+                echo $this->formSelect($fieldset->get('color'));
+                echo $this->formElementErrors($fieldset->get('color'), array('class' => 'formError'));
                 ?>
             </td>
             <td>
@@ -58,22 +58,24 @@
     <thead>
     <tr>
         <th>Name</th>
-        <th>Referenced Date</th>
+        <th>Color</th>
         <th>Delete</th>
     </tr>
     </thead>
     <tbody>
-    <?php foreach ($exceptions as $exception): ?>
+    <?php foreach ($exceptions as $exception):
+        $color = $exception->getColor();
+        ?>
         <tr>
             <td class="exceptionExceptionId invisible"><?php echo $exception->getExceptionId(); ?></td>
             <td class="exceptionName editText"><?php echo $exception->getName(); ?></td>
-            <td class="exceptionReferencedDate editDatetime"><?php echo $exception->getReferencedDate() != null ? $exception->getReferencedDate()->format('d-m-Y') : ''; ?></td>
+            <td class="exceptionColor editColor" style="color:<?php echo $color; ?>"><?php echo $color; ?></td>
             <td class="delete">X</td>
         </tr>
     <?php endforeach; ?>
     </tbody>
 </table>
 <div id="editPanel">
-    <textarea></textarea>
+    <textarea class="editInput"></textarea>
     <span id="editDone">Done</span>
 </div>

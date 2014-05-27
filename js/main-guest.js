@@ -9,16 +9,18 @@ $(function () {
         $('#dateRange').slideToggle();
     });
 
-    $('td').on('mouseover mouseout',function(){
+    $('#optionPanel').css('text-align','left');
+
+    $('td').on('mouseover mouseout', function () {
         var cols = $('colgroup');
-        var i = $(this).prevAll('td').length-1;
-        if($('body').hasClass('schedulePage')) i++;
+        var i = $(this).prevAll('td').length - 1;
+        if ($('body').hasClass('schedulePage')) i++;
         console.log(i);
         $(this).parent().toggleClass('hover')
         $(cols[i]).toggleClass('hover');
     })
 
-    $('table').on('mouseleave',function(){
+    $('table').on('mouseleave', function () {
         $('colgroup').removeClass('hover');
     });
 
@@ -44,6 +46,33 @@ $(function () {
         timepicker: false,
         format: 'd-m-Y',
         formatDate: 'd-m-Y'
+    });
+
+    var table = $('#scheduleTable');
+    var headersToDisable = [2];
+    var headerCount = 2;
+    var headers = table.find('thead th').each(function () {
+        headersToDisable.push(headerCount++);
+    });
+    headersToDisable.pop();
+    headersToDisable.pop();
+    table.dataTable({
+//            stateSave: true,
+        "aoColumnDefs": [
+            { 'bSortable': false, 'aTargets': headersToDisable }
+        ],
+        "order": [
+            [ 1, "desc" ]
+        ],
+        "pagingType": "full_numbers",
+//            "sScrollY": "650px",
+//        "autoWidth":true,
+        "sScrollX": "100%",
+        "sScrollXInner": "100%",
+        "bScrollCollapse": true
+//        "bPaginate": false,
+////        "bFilter": false,
+//        "bInfo" : false
     });
 
 });

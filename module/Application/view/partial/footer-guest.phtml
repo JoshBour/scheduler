@@ -1,6 +1,7 @@
 <?php
 echo $this->inlineScript()->prependFile($this->basePath('js/main-guest.js'), 'text/javascript')
     ->prependFile($this->basePath('js/lib.js'), 'text/javascript')
+    ->prependFile($this->basePath('js/jquery.dataTables.js', 'text/javascript'))
     ->prependFile($this->basePath('js/jquery.datetimepicker.js', 'text/javascript'))
     ->prependFile($this->basePath('js/jquery-1.11.0.min.js', 'text/javascript'));
 ?>

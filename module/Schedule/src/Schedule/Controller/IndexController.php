@@ -40,6 +40,9 @@ class IndexController extends AbstractActionController
         $dates = array();
         $interval = $startDate->diff($endDate)->days + 1;
 
+        /**
+         * @var \Worker\Entity\Worker $worker
+         */
         foreach($workers as $worker){
             $id = $worker->getEncodedId();
             $startDateClone = clone $startDate;

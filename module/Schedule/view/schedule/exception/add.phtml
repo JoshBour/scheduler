@@ -10,7 +10,7 @@ echo $this->formHidden($form->get('security'));
     <thead>
     <tr>
         <th>Name*</th>
-        <th>Referenced Date</th>
+        <th>Color*</th>
         <th>Add</th>
     </tr>
     </thead>
@@ -24,8 +24,8 @@ echo $this->formHidden($form->get('security'));
         </td>
         <td>
             <?php
-            echo $this->formInput($fieldset->get('referencedDate'));
-            echo $this->formElementErrors($fieldset->get('referencedDate'), array('class' => 'formError'));
+            echo $this->formSelect($fieldset->get('color'));
+            echo $this->formElementErrors($fieldset->get('color'), array('class' => 'formError'));
             ?>
         </td>
         <td>

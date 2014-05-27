@@ -13,8 +13,6 @@ echo $this->formHidden($form->get('security'));
         <th>Exception</th>
         <th>Start Time*</th>
         <th>End Time*</th>
-        <th>Total Time*</th>
-        <th>Extra Time</th>
         <th>Add</th>
     </tr>
     </thead>
@@ -42,18 +40,6 @@ echo $this->formHidden($form->get('security'));
             <?php
             echo $this->formInput($fieldset->get('endTime'));
             echo $this->formElementErrors($fieldset->get('endTime'), array('class' => 'formError'));
-            ?>
-        </td>
-        <td>
-            <?php
-            echo $this->formInput($fieldset->get('totalTime'));
-            echo $this->formElementErrors($fieldset->get('totalTime'), array('class' => 'formError'));
-            ?>
-        </td>
-        <td>
-            <?php
-            echo $this->formInput($fieldset->get('extraTime'));
-            echo $this->formElementErrors($fieldset->get('extraTime'), array('class' => 'formError'));
             ?>
         </td>
         <td>

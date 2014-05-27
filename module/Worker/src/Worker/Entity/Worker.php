@@ -94,7 +94,7 @@ class Worker {
     public static function decodeId($id){
         $split = explode(':',$id);
         $fullName = explode('-',$split[1]);
-        return array("workerId"=>$split[0],"workerFullName"=>$fullName[0] . ' ' . $fullName[1]);
+        return array("workerId"=>$split[0],"workerFullName"=>$fullName[0] . ' ' . $fullName[1],"workerPosition" => $split[2]);
     }
 
     public function __construct(){
@@ -102,7 +102,7 @@ class Worker {
     }
 
     public function getEncodedId(){
-        return $this->workerId . ':' . $this->name . '-' . $this->surname;
+        return $this->workerId . ':' . $this->name . '-' . $this->surname . ':' . $this->position;
     }
 
     public function getFullName(){

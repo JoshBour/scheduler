@@ -31,9 +31,9 @@ class Exception {
     private $name;
 
     /**
-     * @ORM\Column(type="datetime", name="referenced_date", nullable=true)
+     * @ORM\Column(type="string", length=20)
      */
-    private $referencedDate;
+    private $color;
 
     /**
      * @ORM\OneToMany(targetEntity="Entry", mappedBy="exception")
@@ -42,6 +42,22 @@ class Exception {
 
     public function __construct(){
         $this->relatedEntries = new ArrayCollection();
+    }
+
+    /**
+     * @param mixed $color
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getColor()
+    {
+        return $this->color;
     }
 
     /**
@@ -75,25 +91,6 @@ class Exception {
     {
         return $this->name;
     }
-
-    /**
-     * @param mixed $referencedDate
-     */
-    public function setReferencedDate($referencedDate)
-    {
-        if(!($referencedDate instanceof \DateTime) && !empty($referencedDate))
-            $referencedDate = new \DateTime($referencedDate);
-        $this->referencedDate = $referencedDate;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getReferencedDate()
-    {
-        return $this->referencedDate;
-    }
-
     /**
      * @param mixed $relatedEntries
      */

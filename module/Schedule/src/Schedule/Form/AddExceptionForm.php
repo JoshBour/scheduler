@@ -34,7 +34,7 @@ class AddExceptionForm extends Form{
             'security',
             'exception' => array(
                 'name',
-                'referencedDate',
+                'color',
             )
         ));
     }

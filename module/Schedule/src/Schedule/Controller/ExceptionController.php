@@ -38,7 +38,8 @@ class ExceptionController extends AbstractActionController
             return new ViewModel(array(
                 "exceptions" => $exceptions,
                 "hideForm" => true,
-                "form" => $this->getAddExceptionForm()
+                "form" => $this->getAddExceptionForm(),
+                "bodyClass" => 'exceptionPage'
             ));
         } else {
             return $this->notFoundAction();
