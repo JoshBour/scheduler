@@ -11,12 +11,17 @@ namespace Admin\Form;
 
 use Zend\Form\Form;
 
-class AddAdminForm extends Form{
-    public function __construct(){
+class AddAdminForm extends Form
+{
+    /**
+     * Add admin form constructor
+     */
+    public function __construct()
+    {
         parent::__construct('addAdminForm');
 
         $this->setAttributes(array(
-           'method' => 'post',
+            'method' => 'post',
             'class' => 'standardForm'
         ));
 

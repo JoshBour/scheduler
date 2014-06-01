@@ -8,17 +8,30 @@
 namespace Application\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
+use Zend\Mvc\Router\RouteMatch;
 
 class ActionName extends AbstractHelper
 {
-
+    /**
+     * @var RouteMatch
+     */
     private $routeMatch;
 
+    /**
+     * Constructor for the action name view helper.
+     *
+     * @param RouteMatch $routeMatch
+     */
     public function __construct($routeMatch)
     {
         $this->routeMatch = $routeMatch;
     }
 
+    /**
+     * Get the current action's name
+     *
+     * @return string
+     */
     public function __invoke()
     {
         if($this->routeMatch)

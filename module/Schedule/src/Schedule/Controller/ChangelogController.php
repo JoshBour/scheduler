@@ -9,18 +9,26 @@
 namespace Schedule\Controller;
 
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\JsonModel;
+use Application\Controller\BaseController;
 use Zend\View\Model\ViewModel;
 
-class ChangelogController extends AbstractActionController
+class ChangelogController extends BaseController
 {
+
+    /**
+     * The changelog entity repository
+     *
+     * @var \Doctrine\ORM\EntityRepository
+     */
     private $changelogRepository;
 
-    private $entityManager;
-
-    private $translator;
-
+    /**
+     * The changelog list action
+     * Route: /changelog
+     * Requires login
+     *
+     * @return ViewModel
+     */
     public function listAction()
     {
         if ($this->identity()) {
@@ -28,7 +36,6 @@ class ChangelogController extends AbstractActionController
             $endDate = new \DateTime($this->params()->fromRoute('endDate', 'last day of this month'));
 
             $changelogs = $this->getChangelogRepository()->findEntriesBetweenDates($startDate, $endDate);
-
 
             return new ViewModel(array(
                 "changelogs" => $changelogs,
@@ -40,32 +47,14 @@ class ChangelogController extends AbstractActionController
     }
 
     /**
+     * Get the changelog entity repository
+     *
      * @return \Schedule\Repository\ChangelogRepository
      */
     public function getChangelogRepository()
     {
         if (null === $this->changelogRepository)
-            $this->changelogRepository = $this->getEntityManager()->getRepository('Schedule\Entity\Changelog');
+            $this->changelogRepository = $this->entityManager->getRepository('Schedule\Entity\Changelog');
         return $this->changelogRepository;
     }
-
-    /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    public function getEntityManager()
-    {
-        if (null === $this->entityManager)
-            $this->entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        return $this->entityManager;
-    }
-
-    /**
-     * @return \Zend\I18n\Translator\Translator
-     */
-    public function getTranslator()
-    {
-        if (null === $this->translator)
-            $this->translator = $this->getServiceLocator()->get('translator');
-        return $this->translator;
-    }
-} 
+}

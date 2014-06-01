@@ -9,71 +9,73 @@
 namespace Worker\Controller;
 
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Application\Controller\BaseController;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
-class IndexController extends AbstractActionController
+class IndexController extends BaseController
 {
-    const MESSAGE_WORKER_CREATED = "The worker has been created successfully.";
-    const MESSAGE_WORKER_REMOVED = "The worker has been removed successfully.";
-    const MESSAGE_WORKER_SAVED = "The workers have been saved successfully";
-    const ERROR_WORKER_NOT_REMOVED = "There was a problem when removing the worker, please try again.";
-    const ERROR_WORKER_NOT_SAVED = "Something went wrong when saving the workers, please try again.";
     const ROUTE_WORKER_LIST = "workers";
     const CONTROLLER_NAME = 'Worker\Controller\Index';
 
+    /**
+     * The add worker form
+     *
+     * @var \Zend\Form\Form
+     */
     private $addWorkerForm;
 
-    private $entityManager;
-
-    private $translator;
-
+    /**
+     * The worker repository
+     *
+     * @var \Worker\Repository\WorkerRepository
+     */
     private $workerRepository;
 
+    /**
+     * The worker service
+     *
+     * @var \Worker\Service\Worker
+     */
     private $workerService;
 
+    /**
+     * The worker list action
+     * Route: /workers
+     * Requires login
+     *
+     * @return array|ViewModel
+     */
     public function listAction()
     {
         if ($this->identity()) {
             $workers = $this->getWorkerRepository()->findAll();
-            $hideForm = false;
-            if (!$form = $this->params()->fromQuery('form')) {
-                $form = $this->getAddWorkerForm();
-                $hideForm = true;
-            }
             return new ViewModel(array(
                 "workers" => $workers,
-                "form" => $form,
-                "hideForm" => $hideForm
+                "form" => $this->getAddWorkerForm(),
             ));
         } else {
             return $this->notFoundAction();
         }
     }
 
+    /**
+     * The workers save action
+     * Route: /workers/save
+     * Only accessible via xmlHttpRequest
+     * Requires login
+     *
+     * @return array|JsonModel
+     */
     public function saveAction()
     {
         if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $success = 1;
-            $message = self::MESSAGE_WORKER_SAVED;
+            $message = $this->translate($this->vocabulary["MESSAGE_WORKER_SAVED"]);
             $entities = $this->params()->fromPost('entities');
-            $em = $this->getEntityManager();
-            $workerRepository = $this->getWorkerRepository();
-            foreach ($entities as $entity) {
-                $worker = $workerRepository->find($entity['WorkerId']);
-                array_shift($entity);
-                foreach ($entity as $key => $value) {
-                    if (!empty($value))
-                        $worker->{'set' . $key}($value);
-                }
-                $em->persist($worker);
-            }
-            try {
-                $em->flush();
-            } catch (\Exception $e) {
+            if (!$this->getWorkerService()->save($entities)) {
                 $success = 0;
-                $message = self::ERROR_WORKER_NOT_SAVED;
+                $message = $this->translate($this->vocabulary["ERROR_WORKER_NOT_SAVED"]);
             }
             return new JsonModel(array(
                 "success" => $success,
@@ -84,6 +86,14 @@ class IndexController extends AbstractActionController
         }
     }
 
+    /**
+     * The worker add action
+     * Route: /workers/add
+     * Only accessible via xmlHttpRequest
+     * Requires login
+     *
+     * @return array|JsonModel|ViewModel
+     */
     public function addAction()
     {
         /**
@@ -97,7 +107,7 @@ class IndexController extends AbstractActionController
                 $form = $this->getAddWorkerForm();
                 $worker = $service->create($data, $form);
                 if ($worker) {
-                    $this->flashMessenger()->addMessage($this->getTranslator()->translate(static::MESSAGE_WORKER_CREATED));
+                    $this->flashMessenger()->addMessage($this->translate($this->vocabulary["MESSAGE_WORKER_CREATED"]));
                     return new JsonModel(array('redirect' => true));
                 } else {
                     $viewModel = new ViewModel(array("form" => $form));
@@ -109,16 +119,24 @@ class IndexController extends AbstractActionController
         return $this->notFoundAction();
     }
 
+    /**
+     * The worker remove action
+     * Route: /workers/remove
+     * Only accessible via xmlHttpRequest
+     * Requires login
+     *
+     * @return array|JsonModel
+     */
     public function removeAction()
     {
         if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $id = $this->params()->fromPost("id");
             $success = 0;
-            $message = self::MESSAGE_WORKER_REMOVED;
+            $message = $this->translate($this->vocabulary["MESSAGE_WORKER_REMOVED"]);
             if ($this->getWorkerService()->remove($id)) {
                 $success = 1;
             } else {
-                $message = "There was a problem when removing the worker, please try again.";
+                $message = $this->translate($this->vocabulary["ERROR_WORKER_NOT_REMOVED"]);
             }
             return new JsonModel(array(
                 "success" => $success,
@@ -141,32 +159,14 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    public function getEntityManager()
-    {
-        if (null === $this->entityManager)
-            $this->entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        return $this->entityManager;
-    }
-
-    /**
-     * @return \Zend\I18n\Translator\Translator
-     */
-    public function getTranslator()
-    {
-        if (null === $this->translator)
-            $this->translator = $this->getServiceLocator()->get('translator');
-        return $this->translator;
-    }
-
-    /**
-     * @return \Doctrine\ORM\EntityRepository
+     * The worker repository
+     *
+     * @return \Worker\Repository\WorkerRepository
      */
     public function getWorkerRepository()
     {
         if (null == $this->workerRepository)
-            $this->workerRepository = $this->getEntityManager()->getRepository('Worker\Entity\Worker');
+            $this->workerRepository = $this->entityManager->getRepository('Worker\Entity\Worker');
         return $this->workerRepository;
     }
 

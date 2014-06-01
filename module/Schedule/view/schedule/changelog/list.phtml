@@ -1,63 +1,64 @@
 <div id="optionPanel">
-    <span id="dateRangeToggle">Select Date Range</span>
+    <span class="dateRangeToggle"><?php echo $this->translate("Select Date Range"); ?></span>
 </div>
 <div id="dateRange" class="invisible">
-    <h2>Select a Date Range</h2>
-    <span>From</span>
+    <h2><?php echo $this->translate("Select a Date Range"); ?></h2>
+    <span><?php echo $this->translate("From"); ?></span>
     <input type="text" id="dateRangeStart"/>
-    <span>To</span>
+    <span><?php echo $this->translate("To"); ?></span>
     <input type="text" id="dateRangeEnd"/>
-    <span class="button">Show</span>
+    <span class="button"><?php echo $this->translate("Show"); ?></span>
 </div>
-<table id="changelogs">
-    <caption>Changelog</caption>
-    <?php
-    for ($i = 0; $i < 9; $i++)
-        echo '<colgroup></colgroup>';
-    ?>
-    <thead>
-
-    <tr>
-        <th rowspan="2">Worker</th>
-        <th rowspan="2">Admin</th>
-        <th rowspan="2" class="blackBorder">Change Time</th>
-    </tr>
-    <tr>
-        <th colspan="3" class="blackBorder">Old Schedule</th>
-        <th colspan="3">New Schedule</th>
-    </tr>
-    <tr>
-    </tr>
-    <tr>
-        <th></th>
-        <th></th>
-        <th class="blackBorder"></th>
-        <th>Start Time</th>
-        <th>End Time</th>
-        <th class="blackBorder">Exception</th>
-        <th>StartTime</th>
-        <th>End Time</th>
-        <th>Exception</th>
-    </tr>
-
-    </thead>
-    <tbody>
-    <?php foreach ($changelogs as $changelog):
-        $newEntry = $changelog->getNewEntry();
-        $oldException = $changelog->getOldException();
-        $newException = $newEntry->getException();
+<div class="tableWrapper">
+    <table id="changelogs">
+        <?php
+        for ($i = 0; $i < 9; $i++)
+            echo '<colgroup></colgroup>';
         ?>
+        <thead>
+
         <tr>
-            <td><?php echo $changelog->getWorker()->getFullName(); ?></td>
-            <td><?php echo $changelog->getAdmin()->getUsername(); ?></td>
-            <td class="blackBorder"><?php echo $changelog->getChangeTime()->format('d-m-Y H:i'); ?></td>
-            <td><?php echo $changelog->getOldStartTime() == null ? ' - ':$changelog->getOldStartTime()->format('d-m-Y H:i'); ?></td>
-            <td><?php echo $changelog->getOldEndTime() == null ? ' - ':$changelog->getOldEndTime()->format('d-m-Y H:i'); ?></td>
-            <td class="blackBorder"<?php echo $oldException==null ? '':' style="color:'.$oldException->getColor().'"'; ?>><?php echo $oldException == null ? " - ":$oldException->getName(); ?></td>
-            <td><?php echo $newEntry->getStartTime()->format('d-m-Y H:i'); ?></td>
-            <td><?php echo $newEntry->getEndTime()->format('d-m-Y H:i'); ?></td>
-            <td<?php echo $newException==null ? '':' style="color:'.$newException->getColor().'"'; ?>><?php echo $newException == null ? " - ":$newException->getName(); ?></td>
+            <th rowspan="2"><?php echo $this->translate("Worker"); ?></th>
+            <th rowspan="2"><?php echo $this->translate("Admin"); ?></th>
+            <th rowspan="2" class="blackBorder"><?php echo $this->translate("Change Time"); ?></th>
+            <th colspan="3" class="blackBorder"><?php echo $this->translate("Old Schedule"); ?></th>
+            <th colspan="3"><?php echo $this->translate("New Schedule"); ?></th>
         </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+        <tr>
+            <th><?php echo $this->translate("Start Time"); ?></th>
+            <th><?php echo $this->translate("End Time"); ?></th>
+            <th class="blackBorder"><?php echo $this->translate("Exception"); ?></th>
+            <th><?php echo $this->translate("StartTime"); ?></th>
+            <th><?php echo $this->translate("End Time"); ?></th>
+            <th><?php echo $this->translate("Exception"); ?></th>
+        </tr>
+
+        </thead>
+        <tbody>
+        <?php
+        /**
+         * @var \Schedule\Entity\Changelog $changelog
+         */
+        foreach ($this->changelogs as $changelog):
+            /**
+             * @var \Schedule\Entity\Entry $newEntry
+             */
+            $newEntry = $changelog->getNewEntry();
+            $oldException = $changelog->getOldException();
+            $newException = $newEntry->getException();
+            ?>
+            <tr>
+                <td><?php echo $changelog->getWorker()->getFullName(); ?></td>
+                <td><?php echo $changelog->getAdmin()->getUsername(); ?></td>
+                <td class="blackBorder"><?php echo $changelog->getChangeTime()->format('d-m-Y H:i'); ?></td>
+                <td><?php echo $changelog->getOldStartTime() == null ? ' - ' : $changelog->getOldStartTime()->format('d-m-Y H:i'); ?></td>
+                <td><?php echo $changelog->getOldEndTime() == null ? ' - ' : $changelog->getOldEndTime()->format('d-m-Y H:i'); ?></td>
+                <td class="blackBorder"<?php echo $oldException == null ? '' : ' style="color:' . $oldException->getColor() . '"'; ?>><?php echo $oldException == null ? " - " : $oldException->getName(); ?></td>
+                <td><?php echo $newEntry->getStartTime()->format('d-m-Y H:i'); ?></td>
+                <td><?php echo $newEntry->getEndTime()->format('d-m-Y H:i'); ?></td>
+                <td<?php echo $newException == null ? '' : ' style="color:' . $newException->getColor() . '"'; ?>><?php echo $newException == null ? " - " : $newException->getName(); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>

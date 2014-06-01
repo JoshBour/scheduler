@@ -15,17 +15,46 @@ use Zend\ServiceManager\ServiceManagerAwareInterface;
 
 class Changelog implements ServiceManagerAwareInterface
 {
-
+    /**
+     * The active admin
+     *
+     * @var \Admin\Entity\Admin
+     */
     private $admin;
 
+    /**
+     * The entity manager
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
     private $entityManager;
 
+    /**
+     * The entry repository
+     *
+     * @var \Schedule\Repository\EntryRepository
+     */
     private $entryRepository;
 
+    /**
+     * The exception repository
+     *
+     * @var \Doctrine\ORM\EntityRepository
+     */
     private $exceptionRepository;
 
+    /**
+     * The service manager
+     *
+     * @var ServiceManager
+     */
     private $serviceManager;
 
+    /**
+     * The worker repository
+     *
+     * @var \Worker\Repository\WorkerRepository
+     */
     private $workerRepository;
 
     /**

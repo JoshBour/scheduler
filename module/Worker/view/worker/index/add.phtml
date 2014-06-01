@@ -1,28 +1,30 @@
 <?php
 $form->prepare();
-$form->setAttribute('action', $this->url('workers/add'));
+/**
+ * @var \Zend\Form\Fieldset $fieldset
+ */
 $fieldset = $form->get('worker');
+$form->setAttribute('action', $this->url('workers/add'));
 echo $this->form()->openTag($form);
 echo $this->formHidden($form->get('security'));
 ?>
 <table>
-    <caption>Add a New Worker</caption>
+    <caption><?php echo $this->translate("Add a New Worker");?></caption>
     <thead>
     <tr>
-        <th>Name*</th>
-        <th>Surname*</th>
-        <th>Username*</th>
-        <th>Password*</th>
-        <th>Email</th>
-        <th>Position</th>
-        <th>Address</th>
-        <th>First Telephone</th>
-        <th>Second Telephone</th>
-        <th>Hire Date</th>
-        <th>Work Hours</th>
-        <th>Salary</th>
-        <th>Notes</th>
-        <th>Delete</th>
+        <th><?php echo $this->translate("Name");?>*</th>
+        <th><?php echo $this->translate("Surname");?>*</th>
+        <th><?php echo $this->translate("Position");?></th>
+        <th><?php echo $this->translate("Email");?></th>
+        <th><?php echo $this->translate("Address");?></th>
+        <th><?php echo $this->translate("First Telephone");?></th>
+        <th><?php echo $this->translate("Second Telephone");?></th>
+        <th><?php echo $this->translate("Hire Date");?></th>
+        <th><?php echo $this->translate("Release Date");?></th>
+        <th><?php echo $this->translate("Work Hours");?></th>
+        <th><?php echo $this->translate("Salary");?></th>
+        <th><?php echo $this->translate("Notes");?></th>
+        <th><?php echo $this->translate("Add");?></th>
     </tr>
     </thead>
     <tbody>
@@ -41,26 +43,14 @@ echo $this->formHidden($form->get('security'));
         </td>
         <td>
             <?php
-            echo $this->formInput($fieldset->get('username'));
-            echo $this->formElementErrors($fieldset->get('username'), array('class' => 'formError'));
-            ?>
-        </td>
-        <td>
-            <?php
-            echo $this->formInput($fieldset->get('password'));
-            echo $this->formElementErrors($fieldset->get('password'), array('class' => 'formError'));
+            echo $this->formInput($fieldset->get('position'));
+            echo $this->formElementErrors($fieldset->get('position'), array('class' => 'formError'));
             ?>
         </td>
         <td>
             <?php
             echo $this->formInput($fieldset->get('email'));
             echo $this->formElementErrors($fieldset->get('email'), array('class' => 'formError'));
-            ?>
-        </td>
-        <td>
-            <?php
-            echo $this->formInput($fieldset->get('position'));
-            echo $this->formElementErrors($fieldset->get('position'), array('class' => 'formError'));
             ?>
         </td>
         <td>
@@ -85,6 +75,12 @@ echo $this->formHidden($form->get('security'));
             <?php
             echo $this->formInput($fieldset->get('hireDate'), array('class','formDate'));
             echo $this->formElementErrors($fieldset->get('hireDate'), array('class' => 'formError'));
+            ?>
+        </td>
+        <td>
+            <?php
+            echo $this->formInput($fieldset->get('releaseDate'), array('class','formDate'));
+            echo $this->formElementErrors($fieldset->get('releaseDate'), array('class' => 'formError'));
             ?>
         </td>
         <td>

@@ -9,34 +9,18 @@
 namespace Schedule\Form;
 
 
-use Zend\Form\Fieldset;
+use Application\Form\BaseFieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\Validator\NotEmpty;
 
-class AddEntryFieldset extends Fieldset implements InputFilterProviderInterface
+class AddEntryFieldset extends BaseFieldset implements InputFilterProviderInterface
 {
-    const ERROR_START_TIME_EMPTY = "The start time can't be empty";
-    const ERROR_END_TIME_EMPTY = "The end time can't be empty";
-    const ERROR_TOTAL_TIME_EMPTY = "The total time can't be empty";
-
-    const LABEL_EXCEPTION = "Exception: ";
-    const LABEL_START_TIME = "Start Time: ";
-    const LABEL_END_TIME = "End Time: ";
-    const LABEL_TOTAL_TIME = "Total Time: ";
-    const LABEL_EXTRA_TIME = "Extra Time: ";
-
     /**
-     * @var \Zend\I18n\Translator\Translator
+     * The add entry fieldset constructor
      */
-    private $translator;
-
-    private $entityManager;
-
-    public function __construct($translator, $entityManager)
+    public function init()
     {
         parent::__construct('entry');
-
-        $this->translator = $translator;
-        $this->entityManager = $entityManager;
 
         $this->add(array(
             'name' => 'entryId',
@@ -48,7 +32,7 @@ class AddEntryFieldset extends Fieldset implements InputFilterProviderInterface
                 'type' => 'DoctrineModule\Form\Element\ObjectSelect',
                 'name' => 'worker',
                 'options' => array(
-                    'object_manager' => $this->entityManager,
+                    'object_manager' => $this->getEntityManager(),
                     'target_class' => 'Worker\Entity\Worker',
                     'property' => 'surname',
                     'disable_inarray_validator' => true
@@ -61,12 +45,12 @@ class AddEntryFieldset extends Fieldset implements InputFilterProviderInterface
                 'type' => 'DoctrineModule\Form\Element\ObjectSelect',
                 'name' => 'exception',
                 'options' => array(
-                    'object_manager' => $this->entityManager,
-                    'empty_option' => $this->translator->translate('None'),
+                    'object_manager' => $this->getEntityManager(),
+                    'empty_option' => $this->getTranslator()->translate($this->getVocabulary()["EMPTY_OPTION"]),
                     'target_class' => 'Schedule\Entity\Exception',
                     'property' => 'name',
                     'disable_inarray_validator' => true,
-                    'label' => $this->translator->translate(self::LABEL_EXCEPTION)
+                    'label' => $this->getTranslator()->translate($this->getVocabulary()["LABEL_EXCEPTION"]) . " "
                 )
             )
         );
@@ -79,7 +63,7 @@ class AddEntryFieldset extends Fieldset implements InputFilterProviderInterface
                     'class' => 'datetimeInput'
                 ),
                 'options' => array(
-                    'label' => $this->translator->translate(self::LABEL_START_TIME)
+                    'label' => $this->getTranslator()->translate($this->getVocabulary()["LABEL_START_TIME"]) . " "
                 )
             )
         );
@@ -92,7 +76,7 @@ class AddEntryFieldset extends Fieldset implements InputFilterProviderInterface
                     'class' => 'datetimeInput'
                 ),
                 'options' => array(
-                    'label' => $this->translator->translate(self::LABEL_END_TIME)
+                    'label' => $this->getTranslator()->translate($this->getVocabulary()["LABEL_END_TIME"]) . " "
                 )
             )
         );
@@ -129,7 +113,7 @@ class AddEntryFieldset extends Fieldset implements InputFilterProviderInterface
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_START_TIME_EMPTY)
+                                NotEmpty::IS_EMPTY => $this->getTranslator()->translate($this->getVocabulary()["ERROR_START_TIME_EMPTY"])
                             )
                         )
                     ),
@@ -146,7 +130,7 @@ class AddEntryFieldset extends Fieldset implements InputFilterProviderInterface
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_END_TIME_EMPTY)
+                                NotEmpty::IS_EMPTY => $this->getTranslator()->translate($this->getVocabulary()["ERROR_END_TIME_EMPTY"])
                             )
                         )
                     ),

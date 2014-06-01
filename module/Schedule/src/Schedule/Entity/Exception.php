@@ -17,7 +17,14 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="exceptions")
  */
-class Exception {
+class Exception
+{
+    public static $colors = array(
+        '0' => 'aqua', '1' => 'black', '2' => 'blue', '3' => 'fuchsia',
+        '4' => 'gray', '5' => 'green', '6' => 'lime', '7' => 'maroon',
+        '8' => 'navy', '9' => 'olive', '10' => 'orange', '11' => 'purple',
+        '12' => 'red', '13' => 'silver', '14' => 'teal', '15' => 'white', '16' => 'yellow');
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -40,7 +47,8 @@ class Exception {
      */
     private $relatedEntries;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->relatedEntries = new ArrayCollection();
     }
 
@@ -91,6 +99,7 @@ class Exception {
     {
         return $this->name;
     }
+
     /**
      * @param mixed $relatedEntries
      */

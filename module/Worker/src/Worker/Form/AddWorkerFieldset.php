@@ -9,25 +9,19 @@
 namespace Worker\Form;
 
 
-use Zend\Form\Fieldset;
+use Application\Form\BaseFieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\Validator\EmailAddress;
+use Zend\Validator\NotEmpty;
 
-class AddWorkerFieldset extends Fieldset implements InputFilterProviderInterface
+class AddWorkerFieldset extends BaseFieldset implements InputFilterProviderInterface
 {
     /**
-     * @var \Zend\I18n\Translator\Translator
+     * The add worker fieldset constructor
      */
-    private $translator;
-
-    const ERROR_NAME_EMPTY = "The name can't be empty.";
-    const ERROR_SURNAME_EMPTY = "The surname can't be empty.";
-    const ERROR_EMAIL_INVALID = "The email has invalid format.";
-
-    public function __construct($translator)
+    public function init()
     {
         parent::__construct('worker');
-
-        $this->translator = $translator;
 
         $this->add(array(
             'name' => 'name',
@@ -113,7 +107,7 @@ class AddWorkerFieldset extends Fieldset implements InputFilterProviderInterface
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_NAME_EMPTY)
+                                NotEmpty::IS_EMPTY => $this->getTranslator()->translate($this->getVocabulary()["ERROR_NAME_EMPTY"])
                             )
                         )
                     ),
@@ -131,7 +125,7 @@ class AddWorkerFieldset extends Fieldset implements InputFilterProviderInterface
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_SURNAME_EMPTY)
+                                NotEmpty::IS_EMPTY => $this->getTranslator()->translate($this->getVocabulary()["ERROR_SURNAME_EMPTY"])
                             )
                         )
                     ),
@@ -149,7 +143,7 @@ class AddWorkerFieldset extends Fieldset implements InputFilterProviderInterface
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\EmailAddress::INVALID_FORMAT => $this->translator->translate(self::ERROR_EMAIL_INVALID),
+                                EmailAddress::INVALID_FORMAT => $this->getTranslator()->translate($this->getVocabulary()["ERROR_EMAIL_INVALID"]),
                             )
                         )
                     ),

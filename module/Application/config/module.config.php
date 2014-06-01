@@ -48,7 +48,6 @@ return array(
             'authStorage' => __NAMESPACE__ . '\Model\AuthStorage',
         ),
         'factories' => array(
-            'login_form' => __NAMESPACE__ . '\Factory\LoginFormFactory',
             'Zend\Authentication\AuthenticationService' => __NAMESPACE__ . '\Factory\AuthFactory',
         ),
         'aliases' => array(
@@ -58,7 +57,8 @@ return array(
     ),
     'controller_plugins' => array(
         'factories' => array(
-            'admin' => __NAMESPACE__ . '\Factory\AdminPluginFactory'
+            'admin' => __NAMESPACE__ . '\Factory\AdminPluginFactory',
+            'translate' => __NAMESPACE__ . '\Factory\TranslatePluginFactory',
         )
     ),
     'translator' => array(
@@ -83,6 +83,10 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Application\Controller\Index' => 'Application\Controller\IndexController'
+        ),
+        'initializers' => array(
+            'entityManager' => __NAMESPACE__ . '\Factory\EntityManagerInitializer',
+            'vocabulary' => __NAMESPACE__ . '\Factory\VocabularyInitializer'
         ),
     ),
     'view_manager' => array(

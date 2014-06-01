@@ -11,7 +11,11 @@ namespace Schedule\Form;
 
 use Zend\Form\Form;
 
+
 class AddExceptionForm extends Form{
+    /**
+     * The add exception form constructor
+     */
     public function __construct(){
         parent::__construct('addExceptionForm');
 

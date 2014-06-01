@@ -8,33 +8,61 @@
 namespace Application\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\ServiceManager\ServiceManager;
+use Zend\Authentication\AuthenticationService;
 
 class ActiveAdmin extends AbstractPlugin{
-
-    private $serviceManager;
-
-    private $entityManager;
-
+    /**
+     * The authentication service
+     *
+     * @var AuthenticationService
+     */
     private $authService;
 
+    /**
+     * The entity manager
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * The service manager
+     *
+     * @var ServiceManager
+     */
+    private $serviceManager;
+
+    /**
+     * Returns the current active admin or false if none exists.
+     *
+     * @return \Admin\Entity\Admin|bool
+     */
     public function __invoke(){
        return $this->getAdmin();
     }
 
     /**
+     * Returns the active admin entity
+     *
      * @return bool|\Admin\Entity\Admin
      */
     public function getAdmin(){
         $em = $this->getEntityManager();
         $auth = $this->getAuthService();
         if($auth->hasIdentity()){
-            $account = $em->getRepository('Admin\Entity\Admin')->find($auth->getIdentity()->getAdminId());
+            $admin = $em->getRepository('Admin\Entity\Admin')->find($auth->getIdentity()->getAdminId());
         }else{
-            $account = false;
+            $admin = false;
         }
-        return $account;
+        return $admin;
     }
 
+    /**
+     * Get the authentication service
+     *
+     * @return AuthenticationService
+     */
     public function getAuthService(){
         if(null === $this->authService)
             $this->authService = $this->getServiceManager()->get('auth_service');
@@ -42,6 +70,8 @@ class ActiveAdmin extends AbstractPlugin{
     }
 
     /**
+     * Get the entity manager
+     *
      * @return \Doctrine\ORM\EntityManager
      */
     public function getEntityManager(){
@@ -50,12 +80,10 @@ class ActiveAdmin extends AbstractPlugin{
         return $this->entityManager;
     }
 
-    public function setServiceManager($sm){
-        $this->serviceManager = $sm;
-    }
-
     /**
-     * @return \Zend\ServiceManager\ServiceManager
+     * Get the service manager;
+     *
+     * @return ServiceManager
      */
     public function getServiceManager(){
         return $this->serviceManager;

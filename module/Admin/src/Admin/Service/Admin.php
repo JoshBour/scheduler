@@ -15,13 +15,25 @@ use Zend\ServiceManager\ServiceManagerAwareInterface;
 
 class Admin implements ServiceManagerAwareInterface
 {
-
-    private $addWorkerForm;
-
+    /**
+     * The admin repository
+     *
+     * @var \Doctrine\ORM\EntityRepository
+     */
     private $adminRepository;
 
+    /**
+     * The entity manager
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
     private $entityManager;
 
+    /**
+     * The service manager
+     *
+     * @var ServiceManager
+     */
     private $serviceManager;
 
     /**
@@ -96,18 +108,6 @@ class Admin implements ServiceManagerAwareInterface
             return false;
         }
         return true;
-    }
-
-    /**
-     * Get the add worker form
-     *
-     * @return \Zend\Form\Form
-     */
-    public function getAddWorkerForm()
-    {
-        if (null === $this->addWorkerForm)
-            $this->addWorkerForm = $this->getServiceManager()->get('worker_add_form');
-        return $this->addWorkerForm;
     }
 
     /**

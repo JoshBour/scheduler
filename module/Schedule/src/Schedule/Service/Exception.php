@@ -14,18 +14,26 @@ use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Schedule\Entity\Exception as ExceptionEntity;
 
 class Exception implements ServiceManagerAwareInterface{
-
-    private $addExceptionForm;
-
+    /**
+     * The entity manager
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
     private $entityManager;
 
-    private $entryRepository;
-
+    /**
+     * The exception repository
+     *
+     * @var \Doctrine\ORM\EntityRepository
+     */
     private $exceptionRepository;
 
+    /**
+     * The service manager
+     *
+     * @var ServiceManager
+     */
     private $serviceManager;
-
-    private $workerRepository;
 
     /**
      * Create a new exception
@@ -35,17 +43,41 @@ class Exception implements ServiceManagerAwareInterface{
      * @return bool
      */
     public function create($data,&$form){
-        $entry = new ExceptionEntity();
+        $exception = new ExceptionEntity();
         $em = $this->getEntityManager();
 
-        $form->bind($entry);
+        $form->bind($exception);
         $form->setData($data);
         if (!$form->isValid()) return false;
-        if(empty($data['exception']['referencedDate'])){
-            $entry->setReferencedDate(null);
+        $exception->setColor(ExceptionEntity::$colors[$exception->getColor()]);
+        try {
+            $em->persist($exception);
+            $em->flush();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Update and save the exceptions
+     *
+     * @param array $entities
+     * @return bool
+     */
+    public function save($entities){
+        $em = $this->getEntityManager();
+        $exceptionRepository = $this->getExceptionRepository();
+        foreach ($entities as $entity) {
+            $exception = $exceptionRepository->find($entity['ExceptionId']);
+            array_shift($entity);
+            foreach ($entity as $key => $value) {
+                if (empty($value)) $value = null;
+                $exception->{'set' . $key}($value);
+            }
+            $em->persist($exception);
         }
         try {
-            $em->persist($entry);
             $em->flush();
             return true;
         } catch (\Exception $e) {
@@ -69,29 +101,6 @@ class Exception implements ServiceManagerAwareInterface{
             return false;
         }
         return true;
-    }
-
-    /**
-     * Get the add exception form
-     *
-     * @return \Zend\Form\Form
-     */
-    public function getAddExceptionForm()
-    {
-        if (null === $this->addExceptionForm)
-            $this->addExceptionForm = $this->getServiceManager()->get('exception_add_form');
-        return $this->addExceptionForm;
-    }
-
-    /**
-     * Get the entry repository
-     *
-     * @return \Schedule\Repository\EntryRepository
-     */
-    public function getEntryRepository(){
-        if(null === $this->entryRepository)
-            $this->entryRepository = $this->getEntityManager()->getRepository('Schedule\Entity\Entry');
-        return $this->entryRepository;
     }
 
     /**
@@ -137,15 +146,4 @@ class Exception implements ServiceManagerAwareInterface{
         return $this->serviceManager;
     }
 
-    /**
-     * Get the worker repository
-     *
-     * @return \Doctrine\ORM\EntityRepository
-     */
-    public function getWorkerRepository()
-    {
-        if (null === $this->workerRepository)
-            $this->workerRepository = $this->getEntityManager()->getRepository('Worker\Entity\Worker');
-        return $this->workerRepository;
-    }
 } 

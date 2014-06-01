@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class Worker
  * @package Application\Entity
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="\Worker\Repository\WorkerRepository")
  * @ORM\Table(name="workers")
  */
 class Worker {

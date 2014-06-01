@@ -9,28 +9,41 @@
 namespace Schedule\Controller;
 
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Application\Controller\BaseController;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
-class ExceptionController extends AbstractActionController
+class ExceptionController extends BaseController
 {
-    const MESSAGE_EXCEPTION_CREATED = "The exception has been created successfully.";
-    const MESSAGE_EXCEPTION_REMOVED = "The exception has been removed successfully.";
-    const MESSAGE_EXCEPTIONS_SAVED = "The exceptions have been saved successfully.";
-    const ERROR_EXCEPTION_REMOVE = "There was a problem when removing the exception, please try again.";
-    const ERROR_EXCEPTIONS_NOT_SAVED = "There was a problem when saving the exceptions, please try again.";
 
+    /**
+     * The add exception form
+     *
+     * @var \Zend\Form\Form
+     */
     private $addExceptionForm;
 
-    private $entityManager;
-
+    /**
+     * The exception repository
+     *
+     * @var \Doctrine\ORM\EntityRepository
+     */
     private $exceptionRepository;
 
-    private $translator;
-
+    /**
+     * The exception service
+     *
+     * @var \Schedule\Service\Exception
+     */
     private $exceptionService;
 
+    /**
+     * The exception list action
+     * Route: /exceptions
+     * Requires login
+     *
+     * @return array|ViewModel
+     */
     public function listAction()
     {
         if ($this->identity()) {
@@ -46,28 +59,23 @@ class ExceptionController extends AbstractActionController
         }
     }
 
+    /**
+     * The exception save action
+     * Route: /exceptions/save
+     * Only accessible via xmlHttpRequest
+     * Requires login
+     *
+     * @return array|JsonModel
+     */
     public function saveAction()
     {
         if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $success = 1;
-            $message = self::MESSAGE_EXCEPTIONS_SAVED;
+            $message = $this->getTranslator()->translate($this->vocabulary["MESSAGE_EXCEPTIONS_SAVED"]);
             $entities = $this->params()->fromPost('entities');
-            $em = $this->getEntityManager();
-            $exceptionRepository = $this->getExceptionRepository();
-            foreach ($entities as $entity) {
-                $exception = $exceptionRepository->find($entity['ExceptionId']);
-                array_shift($entity);
-                foreach ($entity as $key => $value) {
-                    if (empty($value)) $value = null;
-                    $exception->{'set' . $key}($value);
-                }
-                $em->persist($exception);
-            }
-            try {
-                $em->flush();
-            } catch (\Exception $e) {
+            if (!$this->getExceptionService()->save($entities)) {
                 $success = 0;
-                $message = self::ERROR_EXCEPTIONS_NOT_SAVED;
+                $message = $this->getTranslator()->translate($this->vocabulary["ERROR_EXCEPTIONS_NOT_SAVED"]);
             }
             return new JsonModel(array(
                 "success" => $success,
@@ -78,6 +86,15 @@ class ExceptionController extends AbstractActionController
         }
     }
 
+    /**
+     * The add exception action
+     * Route: /exceptions/add
+     * Only accessible via xmlHttpRequest
+     * Requires login
+     *
+     *
+     * @return array|JsonModel|ViewModel
+     */
     public function addAction()
     {
         /**
@@ -91,7 +108,7 @@ class ExceptionController extends AbstractActionController
                 $form = $this->getAddExceptionForm();
                 $worker = $service->create($data, $form);
                 if ($worker) {
-                    $this->flashMessenger()->addMessage($this->getTranslator()->translate(static::MESSAGE_EXCEPTION_CREATED));
+                    $this->flashMessenger()->addMessage($this->translate($this->vocabulary["MESSAGE_EXCEPTION_CREATED"]));
                     return new JsonModel(array('redirect' => true));
                 } else {
                     $viewModel = new ViewModel(array("form" => $form));
@@ -103,16 +120,24 @@ class ExceptionController extends AbstractActionController
         return $this->notFoundAction();
     }
 
+    /**
+     * The exception remove action
+     * Route: /exceptions/remove
+     * Only accessible via xmlHttpRequest
+     * Requires login
+     *
+     * @return array|JsonModel
+     */
     public function removeAction()
     {
         if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $id = $this->params()->fromPost("id");
             $success = 0;
-            $message = self::MESSAGE_EXCEPTION_REMOVED;
+            $message = $this->translate($this->vocabulary["MESSAGE_EXCEPTION_REMOVED"]);
             if ($this->getExceptionService()->remove($id)) {
                 $success = 1;
             } else {
-                $message = self::ERROR_EXCEPTION_REMOVE;
+                $message = $this->translate($this->vocabulary["ERROR_EXCEPTION_REMOVE"]);
             }
             return new JsonModel(array(
                 "success" => $success,
@@ -121,7 +146,6 @@ class ExceptionController extends AbstractActionController
         }
         return $this->notFoundAction();
     }
-
 
     /**
      * Get the add exception form
@@ -136,18 +160,6 @@ class ExceptionController extends AbstractActionController
     }
 
     /**
-     * Get the entity manager
-     *
-     * @return \Doctrine\ORM\EntityManager
-     */
-    public function getEntityManager()
-    {
-        if (null === $this->entityManager)
-            $this->entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        return $this->entityManager;
-    }
-
-    /**
      * Get the exception repository
      *
      * @return \Doctrine\ORM\EntityRepository
@@ -155,7 +167,7 @@ class ExceptionController extends AbstractActionController
     public function getExceptionRepository()
     {
         if (null === $this->exceptionRepository)
-            $this->exceptionRepository = $this->getEntityManager()->getRepository('Schedule\Entity\Exception');
+            $this->exceptionRepository = $this->entityManager->getRepository('Schedule\Entity\Exception');
         return $this->exceptionRepository;
     }
 
@@ -169,17 +181,5 @@ class ExceptionController extends AbstractActionController
         if (null === $this->exceptionService)
             $this->exceptionService = $this->getServiceLocator()->get('exception_service');
         return $this->exceptionService;
-    }
-
-    /**
-     * Get the translator
-     *
-     * @return \Zend\I18n\Translator\Translator
-     */
-    public function getTranslator()
-    {
-        if (null === $this->translator)
-            $this->translator = $this->getServiceLocator()->get('translator');
-        return $this->translator;
     }
 }

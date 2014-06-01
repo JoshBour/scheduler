@@ -1,25 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Josh
- * Date: 19/5/2014
- * Time: 6:10 μμ
- */
-
 namespace Admin\Controller;
 
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Application\Controller\BaseController;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
-class IndexController extends AbstractActionController
+class IndexController extends BaseController
 {
-    const MESSAGE_ADMIN_CREATED = "The admin has been created successfully.";
-    const MESSAGE_ADMIN_REMOVED = "The admin has been removed successfully.";
-    const MESSAGE_ADMIN_SAVED = "The admins have been saved successfully";
-    const ERROR_ADMIN_NOT_REMOVED = "There was a problem when removing the admin, please try again.";
-    const ERROR_ADMIN_NOT_SAVED = "Something went wrong when saving the admins, please try again.";
     const ROUTE_ADMIN_LIST = "admins";
     const CONTROLLER_NAME = 'Admin\Controller\Index';
 
@@ -45,21 +33,8 @@ class IndexController extends AbstractActionController
     private $adminService;
 
     /**
-     * The entity manager
-     *
-     * @var \Doctrine\ORM\EntityManager
-     */
-    private $entityManager;
-
-    /**
-     * The zend translator
-     *
-     * @var \Zend\I18n\Translator\Translator
-     */
-    private $translator;
-
-    /**
      * The admin list action
+     * Route: /admins
      *
      * @return array|ViewModel
      */
@@ -84,6 +59,8 @@ class IndexController extends AbstractActionController
 
     /**
      * The admin save action
+     * Only accessible via xmlHttpRequest
+     * Requires login
      *
      * @return array|JsonModel
      */
@@ -91,11 +68,11 @@ class IndexController extends AbstractActionController
     {
         if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $success = 1;
-            $message = self::MESSAGE_ADMIN_SAVED;
+            $message = $this->translate($this->vocabulary["MESSAGE_ADMIN_SAVED"]);
             $entities = $this->params()->fromPost('entities');
             if (!$this->getAdminService()->save($entities)) {
                 $success = 0;
-                $message = self::ERROR_ADMIN_NOT_SAVED;
+                $message = $this->translate($this->vocabulary["ERROR_ADMIN_NOT_SAVED"]);
             }
             return new JsonModel(array(
                 "success" => $success,
@@ -108,6 +85,8 @@ class IndexController extends AbstractActionController
 
     /**
      * The admin add action
+     * Only accessible via xmlHttpRequest
+     * Requires login
      *
      * @return array|JsonModel|ViewModel
      */
@@ -124,7 +103,7 @@ class IndexController extends AbstractActionController
                 $form = $this->getAddAdminForm();
                 $worker = $service->create($data, $form);
                 if ($worker) {
-                    $this->flashMessenger()->addMessage($this->getTranslator()->translate(static::MESSAGE_ADMIN_CREATED));
+                    $this->flashMessenger()->addMessage($this->translate($this->vocabulary["MESSAGE_ADMIN_CREATED"]));
                     return new JsonModel(array('redirect' => true));
                 } else {
                     $viewModel = new ViewModel(array("form" => $form));
@@ -138,6 +117,8 @@ class IndexController extends AbstractActionController
 
     /**
      * The admin remove action
+     * Only accessible via xmlHttpRequest
+     * Requires login
      *
      * @return array|JsonModel
      */
@@ -146,11 +127,11 @@ class IndexController extends AbstractActionController
         if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $id = $this->params()->fromPost("id");
             $success = 0;
-            $message = self::MESSAGE_ADMIN_REMOVED;
+            $message = $this->translate($this->vocabulary["MESSAGE_ADMIN_REMOVED"]);
             if ($this->getAdminService()->remove($id)) {
                 $success = 1;
             } else {
-                $message = self::ERROR_ADMIN_NOT_REMOVED;
+                $message = $this->translate($this->vocabulary["ERROR_ADMIN_NOT_REMOVED"]);
             }
             return new JsonModel(array(
                 "success" => $success,
@@ -173,6 +154,8 @@ class IndexController extends AbstractActionController
     }
 
     /**
+     * Get the admin repository
+     *
      * @return \Doctrine\ORM\EntityRepository
      */
     public function getAdminRepository()
@@ -183,7 +166,7 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * Gets the worker service.
+     * Gets the worker service
      *
      * @return \Admin\Service\Admin
      */
@@ -194,23 +177,5 @@ class IndexController extends AbstractActionController
         return $this->adminService;
     }
 
-    /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    public function getEntityManager()
-    {
-        if (null === $this->entityManager)
-            $this->entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        return $this->entityManager;
-    }
 
-    /**
-     * @return \Zend\I18n\Translator\Translator
-     */
-    public function getTranslator()
-    {
-        if (null === $this->translator)
-            $this->translator = $this->getServiceLocator()->get('translator');
-        return $this->translator;
-    }
 } 

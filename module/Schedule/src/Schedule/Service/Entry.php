@@ -16,18 +16,46 @@ use Zend\ServiceManager\ServiceManagerAwareInterface;
 class Entry implements ServiceManagerAwareInterface
 {
 
-    private $addEntryForm;
-
+    /**
+     * The changelog service
+     *
+     * @var Changelog
+     */
     private $changelogService;
 
+    /**
+     * The entity manager
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
     private $entityManager;
 
+    /**
+     * The entry repository
+     *
+     * @var \Schedule\Repository\EntryRepository
+     */
     private $entryRepository;
 
+    /**
+     * The exception repository
+     *
+     * @var \Doctrine\ORM\EntityRepository
+     */
     private $exceptionRepository;
 
+    /**
+     * The service manager
+     *
+     * @var ServiceManager
+     */
     private $serviceManager;
 
+    /**
+     * The worker repository
+     *
+     * @var \Worker\Repository\WorkerRepository
+     */
     private $workerRepository;
 
     /**
@@ -52,12 +80,8 @@ class Entry implements ServiceManagerAwareInterface
         } else {
             $entry->setException(null);
         }
-        $changelog = $this->getChangelogService()->create(new EntryEntity(), $entry);
         try {
             $em->persist($entry);
-            if ($changelog) {
-                $em->persist($changelog);
-            }
             $em->flush();
             return true;
         } catch (\Exception $e) {
@@ -140,18 +164,6 @@ class Entry implements ServiceManagerAwareInterface
     }
 
     /**
-     * Get the add entry form
-     *
-     * @return \Zend\Form\Form
-     */
-    public function getAddEntryForm()
-    {
-        if (null === $this->addEntryForm)
-            $this->addEntryForm = $this->getServiceManager()->get('entry_add_form');
-        return $this->addEntryForm;
-    }
-
-    /**
      * Get the changelog service
      *
      * @return Changelog
@@ -222,7 +234,7 @@ class Entry implements ServiceManagerAwareInterface
     /**
      * Get the worker repository
      *
-     * @return \Doctrine\ORM\EntityRepository
+     * @return \Worker\Repository\WorkerRepository
      */
     public function getWorkerRepository()
     {

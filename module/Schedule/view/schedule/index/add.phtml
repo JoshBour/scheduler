@@ -1,19 +1,22 @@
 <?php
 $form->prepare();
-$form->setAttribute('action', $this->url('schedule_add'));
+/**
+ * @var \Zend\Form\Fieldset $fieldset
+ */
 $fieldset = $form->get('entry');
+$form->setAttribute('action', $this->url('schedule_add'));
 echo $this->form()->openTag($form);
 echo $this->formHidden($form->get('security'));
 ?>
 <table>
-    <caption>Add a New Entry</caption>
+    <caption><?php echo $this->translate("Add a New Entry"); ?></caption>
     <thead>
     <tr>
-        <th>Worker*</th>
-        <th>Exception</th>
-        <th>Start Time*</th>
-        <th>End Time*</th>
-        <th>Add</th>
+        <th><?php echo $this->translate("Worker"); ?>*</th>
+        <th><?php echo $this->translate("Exception"); ?></th>
+        <th><?php echo $this->translate("Start Time"); ?>*</th>
+        <th><?php echo $this->translate("End Time"); ?>*</th>
+        <th><?php echo $this->translate("Add"); ?></th>
     </tr>
     </thead>
     <tbody>

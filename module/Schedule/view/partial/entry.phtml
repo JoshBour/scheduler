@@ -13,7 +13,6 @@ if (!empty($entry)) {
     $entryValue = ' - ';
 }
 ?>
-<td<?php echo $exception != null ? ' style="color:'.$exception->getColor().'"':'';?>>
     <div class="entry">
         <span class="invisible workerId"><?php echo $workerId; ?></span>
         <span class="invisible entryId"><?php echo $entryId; ?></span>
@@ -23,6 +22,5 @@ if (!empty($entry)) {
         <span class="invisible startTime"><?php echo empty($startTime) ? '' : $startTime->format('H:i'); ?></span>
         <span class="invisible endDate"><?php echo empty($endTime) ? $date : $endTime->format('d-m-Y'); ?></span>
         <span class="invisible endTime"><?php echo empty($endTime) ? '' : $endTime->format('H:i'); ?></span>
-        <span class="entryValue"><?php echo $entryValue; ?></span>
+        <span class="entryValue"<?php echo $exception != null ? ' style="color:' . $exception->getColor() . '"' : ''; ?>><?php echo $entryValue; ?></span>
     </div>
-</td>

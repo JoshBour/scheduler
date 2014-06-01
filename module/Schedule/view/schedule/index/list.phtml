@@ -1,46 +1,42 @@
 <div id="optionPanel">
-    <span id="dateRangeToggle">
-        Select Date Range
-    </span>
+    <span class="dateRangeToggle"><?php echo $this->translate("Select Date Range"); ?></span>
     <?php if ($this->identity()): ?>
-        <span id="addEntryToggle">
-        + Add New Entry
-    </span>
-        <span id="saveChanges">
-        Save
-    </span>
-        <span id="resetChanges">
-        Reset
-    </span>
+        <span class="addEntryToggle">+ <?php echo $this->translate("Add New Entry"); ?></span>
+        <span id="saveChanges"><?php echo $this->translate("Save"); ?></span>
+        <span id="resetChanges"><?php echo $this->translate("Reset"); ?></span>
     <?php endif; ?>
+    <a href="<?php echo $this->url('schedule_export',array('startDate' => $startDate->format('d-m-Y'),'endDate' => $endDate->format('d-m-Y'))); ?>"><?php echo $this->translate("Export Excel"); ?></a>
 </div>
 <div id="dateRange" class="invisible">
-    <h2>Select a Date Range</h2>
-    <span>From</span>
+    <h2><?php echo $this->translate("Select a Date Range"); ?></h2>
+    <span><?php echo $this->translate("From"); ?></span>
     <input type="text" id="dateRangeStart"/>
-    <span>To</span>
+    <span><?php echo $this->translate("To"); ?></span>
     <input type="text" id="dateRangeEnd"/>
-    <span class="button">Show</span>
+    <span class="button"><?php echo $this->translate("Show"); ?></span>
 </div>
 <?php if ($this->identity()): ?>
-    <div id="addEntry"<?php echo $hideForm ? ' class="invisible"' : ''; ?>>
+    <div id="addEntry">
         <?php
         $form->prepare();
-        $form->setAttribute('action', $this->url('schedule_add'));
+        /**
+         * @var \Zend\Form\Fieldset $fieldset
+         */
         $fieldset = $form->get('entry');
+        $form->setAttribute('action', $this->url('schedule_add'));
         echo $this->form()->openTag($form);
         echo $this->formHidden($form->get('security'));
         echo $this->formHidden($fieldset->get('entryId'));
         ?>
         <table>
-            <caption>Add a New Entry</caption>
+            <caption><?php echo $this->translate("Add a New Entry"); ?></caption>
             <thead>
             <tr>
-                <th>Worker*</th>
-                <th>Exception</th>
-                <th>Start Time*</th>
-                <th>End Time*</th>
-                <th>Add</th>
+                <th><?php echo $this->translate("Worker"); ?>*</th>
+                <th><?php echo $this->translate("Exception"); ?></th>
+                <th><?php echo $this->translate("Start Time"); ?>*</th>
+                <th><?php echo $this->translate("End Time"); ?>*</th>
+                <th><?php echo $this->translate("Add"); ?></th>
             </tr>
             </thead>
             <tbody>
@@ -78,41 +74,43 @@
         <?php echo $this->form()->closeTag() ?>
     </div>
 <?php endif; ?>
-<table id="scheduleTable">
-<!--    <caption>--><?php //echo $startDate->format('l j F Y'); ?>
-<!--        - --><?php //echo $endDate->format('l j F Y'); ?><!--</caption>-->
-    <?php
-    $end = $startDate->diff($endDate)->days + 2;
-    for ($i = 0; $i < $end; $i++)
-        echo '<colgroup></colgroup>';
-    ?>
-    <thead>
-    <tr>
-        <th>Worker</th>
-        <th>Position</th>
-        <?php
-        do {
-            $interval = $startDate->diff($endDate);
-            echo "<th>" . $startDate->format('D j/m') . "</th>";
-            $startDate->modify('+1 day');
-        } while ($interval->days != 0);
 
+<div class="tableWrapper">
+    <table id="schedule" class="scheduleTable">
+        <?php
+        $end = $startDate->diff($endDate)->days + 2;
+        for ($i = 0; $i < $end; $i++)
+            echo '<colgroup></colgroup>';
         ?>
-    </tr>
-    </thead>
-    <tbody>
-    <div class="scroll">
+        <thead>
+        <tr>
+            <th style="width:60px"><?php echo $this->translate("Worker"); ?></th>
+            <th style="width:45px"><?php echo $this->translate("Position"); ?></th>
+            <?php
+            do {
+                $interval = $startDate->diff($endDate);
+                echo "<th>" . \Application\Model\DateUtils::getTranslatedDate($startDate) . "</th>";
+                $startDate->modify('+1 day');
+            } while ($interval->days != 0);
+
+            ?>
+        </tr>
+        </thead>
+        <tbody>
         <?php
         foreach ($dates as $id => $dates):
             $decodedId = \Worker\Entity\Worker::decodeId($id);
             ?>
             <tr>
-                <td style="padding:10px; background-color:#dedede"><span class="workerName"><?php echo $decodedId["workerFullName"]; ?></span>
-                <td style="padding:10px; background-color:#eeeeee"><span class="workerPosition"><?php echo $decodedId["workerPosition"]; ?></span>
+                <td style="padding:10px; background-color:#dedede"><span
+                        class="workerName"><?php echo $decodedId["workerFullName"]; ?></span>
+                <td style="padding:10px; background-color:#eeeeee"><span
+                        class="workerPosition"><?php echo $decodedId["workerPosition"]; ?></span>
                 </td>
                 <?php
                 foreach ($dates as $date => $entry):
                     ?>
+                    <td>
                         <?php
                         if (!empty($entry)) {
                             if (is_array($entry)) {
@@ -125,12 +123,14 @@
                             echo $this->partial("entry", array("workerId" => $decodedId["workerId"], "entry" => "", "date" => $date));
                         }
                         ?>
+                    </td>
                 <?php endforeach; ?>
             </tr>
         <?php endforeach; ?>
-    </div>
-    </tbody>
-</table>
+        </tbody>
+    </table>
+
+</div>
 <?php if ($this->identity()): ?>
     <div id="editPanel">
         <?php
@@ -163,7 +163,7 @@
         </div>
         <?php
         echo $this->form()->closeTag() ?>
-        <span id="formEditDone">Done</span>
-        <span id="formEditRemove">Remove</span>
+        <span id="formEditDone"><?php echo $this->translate("Done"); ?></span>
+        <span id="formEditRemove"><?php echo $this->translate("Remove"); ?></span>
     </div>
 <?php endif; ?>

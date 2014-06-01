@@ -1,29 +1,26 @@
 <div id="optionPanel">
-    <span id="addExceptionToggle">
-        + Add New Exception
-    </span>
-    <span id="saveChanges">
-        Save
-    </span>
-    <span id="resetChanges">
-        Reset
-    </span>
+    <span class="addExceptionToggle">+ <?php echo $this->translate("Add New Exception"); ?></span>
+    <span id="saveChanges"><?php echo $this->translate("Save"); ?></span>
+    <span id="resetChanges"><?php echo $this->translate("Reset"); ?></span>
 </div>
-<div id="addException"<?php echo $hideForm ? ' class="invisible"' : ''; ?>>
+<div id="addException">
     <?php
     $form->prepare();
-    $form->setAttribute('action', $this->url('exceptions/add'));
+    /**
+     * @var \Zend\Form\Fieldset $fieldset
+     */
     $fieldset = $form->get('exception');
+    $form->setAttribute('action', $this->url('exceptions/add'));
     echo $this->form()->openTag($form);
     echo $this->formHidden($form->get('security'));
     ?>
     <table>
-        <caption>Add a New Exception</caption>
+        <caption><?php echo $this->translate("Add a New Exception"); ?></caption>
         <thead>
         <tr>
-            <th>Name*</th>
-            <th>Color*</th>
-            <th>Add</th>
+            <th><?php echo $this->translate("Name"); ?>*</th>
+            <th><?php echo $this->translate("Color"); ?>*</th>
+            <th><?php echo $this->translate("Add"); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -49,33 +46,39 @@
     <?php echo $this->form()->closeTag() ?>
 
 </div>
-<table id="exceptions" class="editableTable">
-    <caption>Exceptions</caption>
-    <?php
-    for ($i = 0; $i < 3; $i++)
-        echo '<colgroup></colgroup>';
-    ?>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Color</th>
-        <th>Delete</th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($exceptions as $exception):
-        $color = $exception->getColor();
+<div class="tableWrapper">
+    <table id="exceptions" class="editableTable">
+        <?php
+        for ($i = 0; $i < 3; $i++)
+            echo '<colgroup></colgroup>';
         ?>
+        <thead>
         <tr>
-            <td class="exceptionExceptionId invisible"><?php echo $exception->getExceptionId(); ?></td>
-            <td class="exceptionName editText"><?php echo $exception->getName(); ?></td>
-            <td class="exceptionColor editColor" style="color:<?php echo $color; ?>"><?php echo $color; ?></td>
-            <td class="delete">X</td>
+            <th class="invisible">Color Id</th>
+            <th><?php echo $this->translate("Name"); ?></th>
+            <th><?php echo $this->translate("Color"); ?></th>
+            <th><?php echo $this->translate("Delete"); ?></th>
         </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        <?php
+        /**
+         * @var \Schedule\Entity\Exception $exception
+         */
+        foreach ($this->exceptions as $exception):
+            $color = $exception->getColor();
+            ?>
+            <tr>
+                <td class="exceptionExceptionId invisible"><?php echo $exception->getExceptionId(); ?></td>
+                <td class="exceptionName editText"><?php echo $exception->getName(); ?></td>
+                <td class="exceptionColor editColor" style="color:<?php echo $color; ?>"><?php echo $color; ?></td>
+                <td class="delete">X</td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 <div id="editPanel">
     <textarea class="editInput"></textarea>
-    <span id="editDone">Done</span>
+    <span id="editDone"><?php echo $this->translate("Done"); ?></span>
 </div>

@@ -1,39 +1,36 @@
 <div id="optionPanel">
-    <span id="addWorkerToggle">
-        + Add Worker
-    </span>
-    <span id="saveChanges">
-        Save
-    </span>
-    <span id="resetChanges">
-        Reset
-    </span>
+    <span class="addWorkerToggle">+ <?php echo $this->translate("Add Worker"); ?></span>
+    <span id="saveChanges"><?php echo $this->translate("Save"); ?></span>
+    <span id="resetChanges"><?php echo $this->translate("Reset"); ?></span>
 </div>
-<div id="addWorkers"<?php echo $hideForm ? ' class="invisible"' : ''; ?>>
+<div id="addWorker">
     <?php
     $form->prepare();
-    $form->setAttribute('action', $this->url('workers/add'));
+    /**
+     * @var \Zend\Form\Fieldset $fieldset
+     */
     $fieldset = $form->get('worker');
+    $form->setAttribute('action', $this->url('workers/add'));
     echo $this->form()->openTag($form);
     echo $this->formHidden($form->get('security'));
     ?>
     <table>
-        <caption>Add a New Worker</caption>
+        <caption><?php echo $this->translate("Add a New Worker"); ?></caption>
         <thead>
         <tr>
-            <th>Name*</th>
-            <th>Surname*</th>
-            <th>Email</th>
-            <th>Position</th>
-            <th>Address</th>
-            <th>First Telephone</th>
-            <th>Second Telephone</th>
-            <th>Hire Date</th>
-            <th>Release Date</th>
-            <th>Work Hours</th>
-            <th>Salary</th>
-            <th>Notes</th>
-            <th>Add</th>
+            <th><?php echo $this->translate("Name"); ?>*</th>
+            <th><?php echo $this->translate("Surname"); ?>*</th>
+            <th><?php echo $this->translate("Position"); ?></th>
+            <th><?php echo $this->translate("Email"); ?></th>
+            <th><?php echo $this->translate("Address"); ?></th>
+            <th><?php echo $this->translate("First Telephone"); ?></th>
+            <th><?php echo $this->translate("Second Telephone"); ?></th>
+            <th><?php echo $this->translate("Hire Date"); ?></th>
+            <th><?php echo $this->translate("Release Date"); ?></th>
+            <th><?php echo $this->translate("Work Hours"); ?></th>
+            <th><?php echo $this->translate("Salary"); ?></th>
+            <th><?php echo $this->translate("Notes"); ?></th>
+            <th><?php echo $this->translate("Add"); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -52,14 +49,14 @@
             </td>
             <td>
                 <?php
-                echo $this->formInput($fieldset->get('email'));
-                echo $this->formElementErrors($fieldset->get('email'), array('class' => 'formError'));
+                echo $this->formInput($fieldset->get('position'));
+                echo $this->formElementErrors($fieldset->get('position'), array('class' => 'formError'));
                 ?>
             </td>
             <td>
                 <?php
-                echo $this->formInput($fieldset->get('position'));
-                echo $this->formElementErrors($fieldset->get('position'), array('class' => 'formError'));
+                echo $this->formInput($fieldset->get('email'));
+                echo $this->formElementErrors($fieldset->get('email'), array('class' => 'formError'));
                 ?>
             </td>
             <td>
@@ -118,55 +115,57 @@
     </table>
     <?php echo $this->form()->closeTag() ?>
 </div>
-<table id="workers" class="editableTable">
-    <caption>Worker List</caption>
-    <?php
-    for ($i = 0; $i < 13; $i++)
-        echo '<colgroup></colgroup>';
-    ?>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Surname</th>
-        <th>Email</th>
-        <th>Position</th>
-        <th>Address</th>
-        <th>First Telephone</th>
-        <th>Second Telephone</th>
-        <th>Hire Date</th>
-        <th>Release Date</th>
-        <th>Work Hours</th>
-        <th>Salary</th>
-        <th>Notes</th>
-        <th>Delete</th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php
-    /**
-     * @var \Worker\Entity\Worker $worker
-     */
-    foreach ($workers as $worker): ?>
+<div class="tableWrapper">
+    <table id="workers" class="editableTable">
+        <?php
+        for ($i = 0; $i < 13; $i++)
+            echo '<colgroup></colgroup>';
+        ?>
+        <thead>
         <tr>
-            <td class="workerWorkerId invisible"><?php echo $worker->getWorkerId(); ?></td>
-            <td class="workerName editText"><?php echo $worker->getName(); ?></td>
-            <td class="workerSurname editText"><?php echo $worker->getSurname(); ?></td>
-            <td class="workerEmail editText"><?php echo $worker->getEmail(); ?></td>
-            <td class="workerPosition editText"><?php echo $worker->getPosition(); ?></td>
-            <td class="workerAddress editText"><?php echo $worker->getAddress(); ?></td>
-            <td class="workerFirstTelephone editText"><?php echo $worker->getFirstTelephone(); ?></td>
-            <td class="workerSecondTelephone editText"><?php echo $worker->getSecondTelephone(); ?></td>
-            <td class="workerHireDate editDatetime"><?php echo is_null($worker->getHireDate()) ? '' : $worker->getHireDate()->format('d-m-Y'); ?></td>
-            <td class="workerReleaseDate editDatetime"><?php echo is_null($worker->getReleaseDate()) ? '' : $worker->getReleaseDate()->format('d-m-Y'); ?></td>
-            <td class="workerWorkHours editText"><?php echo $worker->getWorkHours(); ?></td>
-            <td class="workerSalary editText"><?php echo $worker->getSalary(); ?></td>
-            <td class="workerNotes editText"><?php echo $worker->getNotes(); ?></td>
-            <td class="delete">X</td>
+            <th class="invisible">Id</th>
+            <th><?php echo $this->translate("Name"); ?></th>
+            <th><?php echo $this->translate("Surname"); ?></th>
+            <th><?php echo $this->translate("Position"); ?></th>
+            <th><?php echo $this->translate("Email"); ?></th>
+            <th><?php echo $this->translate("Address"); ?></th>
+            <th><?php echo $this->translate("First Telephone"); ?></th>
+            <th><?php echo $this->translate("Second Telephone"); ?></th>
+            <th><?php echo $this->translate("Hire Date"); ?></th>
+            <th><?php echo $this->translate("Release Date"); ?></th>
+            <th><?php echo $this->translate("Work Hours"); ?></th>
+            <th><?php echo $this->translate("Salary"); ?></th>
+            <th><?php echo $this->translate("Notes"); ?></th>
+            <th><?php echo $this->translate("Delete"); ?></th>
         </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        <?php
+        /**
+         * @var \Worker\Entity\Worker $worker
+         */
+        foreach ($this->workers as $worker): ?>
+            <tr>
+                <td class="workerWorkerId invisible"><?php echo $worker->getWorkerId(); ?></td>
+                <td class="workerName editText"><?php echo $worker->getName(); ?></td>
+                <td class="workerSurname editText"><?php echo $worker->getSurname(); ?></td>
+                <td class="workerPosition editText"><?php echo $worker->getPosition(); ?></td>
+                <td class="workerEmail editText"><?php echo $worker->getEmail(); ?></td>
+                <td class="workerAddress editText"><?php echo $worker->getAddress(); ?></td>
+                <td class="workerFirstTelephone editText"><?php echo $worker->getFirstTelephone(); ?></td>
+                <td class="workerSecondTelephone editText"><?php echo $worker->getSecondTelephone(); ?></td>
+                <td class="workerHireDate editDatetime"><?php echo is_null($worker->getHireDate()) ? '' : $worker->getHireDate()->format('d-m-Y'); ?></td>
+                <td class="workerReleaseDate editDatetime"><?php echo is_null($worker->getReleaseDate()) ? '' : $worker->getReleaseDate()->format('d-m-Y'); ?></td>
+                <td class="workerWorkHours editText"><?php echo $worker->getWorkHours(); ?></td>
+                <td class="workerSalary editText"><?php echo $worker->getSalary(); ?></td>
+                <td class="workerNotes editText"><?php echo $worker->getNotes(); ?></td>
+                <td class="delete">X</td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 <div id="editPanel">
-    <textarea></textarea>
-    <span id="editDone">Done</span>
+    <textarea class="editInput"></textarea>
+    <span id="editDone"><?php echo $this->translate("Done"); ?></span>
 </div>

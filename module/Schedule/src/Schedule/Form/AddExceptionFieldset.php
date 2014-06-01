@@ -9,27 +9,19 @@
 namespace Schedule\Form;
 
 
-use Zend\Form\Fieldset;
+use Application\Form\BaseFieldset;
+use Schedule\Entity\Exception;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\Validator\NotEmpty;
 
-class AddExceptionFieldset extends Fieldset implements InputFilterProviderInterface
+class AddExceptionFieldset extends BaseFieldset implements InputFilterProviderInterface
 {
-    const ERROR_NAME_EMPTY = "The name can't be empty";
-    const ERROR_COLOR_EMPTY = "The color can't be empty";
-
     /**
-     * @var \Zend\I18n\Translator\Translator
+     * The add exception fieldset constructor
      */
-    private $translator;
-
-    private $entityManager;
-
-    public function __construct($translator, $entityManager)
+    public function init()
     {
         parent::__construct('exception');
-
-        $this->translator = $translator;
-        $this->entityManager = $entityManager;
 
         $this->add(
             array(
@@ -38,16 +30,12 @@ class AddExceptionFieldset extends Fieldset implements InputFilterProviderInterf
             )
         );
 
-        $colors = array('0' => 'aqua', '1' => 'black', '2' => 'blue', '3' => 'fuchsia', '4' => 'gray', '5' => 'green', '6' => 'lime', '7' => 'maroon',
-            '8' => 'navy', '9' => 'olive', '10' => 'orange', '11' => 'purple',
-            '12' => 'red', '13' => 'silver', '14' => 'teal', '15' => 'white', '16' => 'yellow');
-
         $this->add(
             array(
                 'type' => 'Zend\Form\Element\Select',
                 'name' => 'color',
                 'options' => array(
-                    'value_options' => $colors,
+                    'value_options' => Exception::$colors,
                 ),
                 'attributes' => array(
                     'class' => 'colorSelect'
@@ -78,7 +66,7 @@ class AddExceptionFieldset extends Fieldset implements InputFilterProviderInterf
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_NAME_EMPTY)
+                                NotEmpty::IS_EMPTY => $this->getTranslator()->translate($this->getVocabulary()["ERROR_NAME_EMPTY"])
                             )
                         )
                     ),
@@ -96,7 +84,7 @@ class AddExceptionFieldset extends Fieldset implements InputFilterProviderInterf
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_COLOR_EMPTY)
+                                NotEmpty::IS_EMPTY => $this->getTranslator()->translate($this->getVocabulary()["ERROR_COLOR_EMPTY"])
                             )
                         )
                     ),

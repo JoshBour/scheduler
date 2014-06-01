@@ -8,16 +8,16 @@
 
 namespace Worker\Factory;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\InputFilter\InputFilter;
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
+use Worker\Entity\Worker;
 use Worker\Form\AddWorkerFieldset;
 use Worker\Form\AddWorkerForm;
-use Worker\Entity\Worker;
+use Zend\InputFilter\InputFilter;
+use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-
-class WorkerAddFormFactory implements FactoryInterface{
+class WorkerAddFormFactory implements FactoryInterface
+{
     /**
      * Create service
      *
@@ -26,8 +26,15 @@ class WorkerAddFormFactory implements FactoryInterface{
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        /**
+         * @var \Doctrine\ORM\EntityManager $entityManager
+         */
         $entityManager = $serviceLocator->get('Doctrine\ORM\EntityManager');
-        $fieldset = new AddWorkerFieldset($serviceLocator->get('translator'));
+        $formManager = $serviceLocator->get('FormElementManager');
+        /**
+         * @var AddWorkerFieldset $fieldset
+         */
+        $fieldset = $formManager->get('Worker\Form\AddWorkerFieldset');
         $form = new AddWorkerForm();
         $hydrator = new DoctrineHydrator($entityManager, '\Worker\Entity\Worker');
 

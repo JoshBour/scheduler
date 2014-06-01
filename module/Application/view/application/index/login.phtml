@@ -1,9 +1,15 @@
 <div id="login">
     <h1><?php echo $this->translate("Login to Scheduler"); ?></h1>
     <?php
+    /**
+     * @var \Zend\Form\Form $form
+     */
     $form->prepare();
-    $form->setAttribute('action', $this->url('login'));
+    /**
+     * @var \Zend\Form\Fieldset $fieldset
+     */
     $fieldset = $form->get('admin');
+    $form->setAttribute('action', $this->url('login'));
 
     echo $this->form()->openTag($form);
     echo $this->formHidden($form->get('security'));

@@ -1,12 +1,25 @@
 $(function () {
 
     var flash = $('#flash');
+    var body = $('body');
     if (flash.is(':visible')) {
         flash.setRemoveTimeout(5000);
     }
 
-    $('#dateRangeToggle').on('click', function () {
-        $('#dateRange').slideToggle();
+    $('span[class$="Toggle"]').on('click',function(){
+        var toggler = $(this).attr('class');
+        var element = $('#'+toggler.substr(0,toggler.length-6));
+        console.log(element);
+        if (element.is(':visible')) {
+            element.slideToggle("normal", function () {
+                ofh = new $.fn.dataTable.FixedHeader(table);
+            });
+        } else {
+            element.slideToggle();
+            body.children(".fixedHeader").each(function () {
+                $(this).remove();
+            });
+        }
     });
 
     $('#optionPanel').css('text-align','left');
@@ -15,7 +28,6 @@ $(function () {
         var cols = $('colgroup');
         var i = $(this).prevAll('td').length - 1;
         if ($('body').hasClass('schedulePage')) i++;
-        console.log(i);
         $(this).parent().toggleClass('hover')
         $(cols[i]).toggleClass('hover');
     })
@@ -24,7 +36,7 @@ $(function () {
         $('colgroup').removeClass('hover');
     });
 
-    $('#dateRange .button').on('click', function () {
+    $('#dateRange').find('.button').on('click', function () {
         var start = $('#dateRangeStart').val();
         var end = $('#dateRangeEnd').val();
         if (start == '' || end == '') {
@@ -42,13 +54,9 @@ $(function () {
         }
     });
 
-    $('#dateRangeStart, #dateRangeEnd').datetimepicker({
-        timepicker: false,
-        format: 'd-m-Y',
-        formatDate: 'd-m-Y'
-    });
+    $('#dateRangeStart, #dateRangeEnd').datePicker();
 
-    var table = $('#scheduleTable');
+    var table = $('.scheduleTable');
     var headersToDisable = [2];
     var headerCount = 2;
     var headers = table.find('thead th').each(function () {
@@ -56,8 +64,12 @@ $(function () {
     });
     headersToDisable.pop();
     headersToDisable.pop();
-    table.dataTable({
+    table = table.dataTable({
 //            stateSave: true,
+        "lengthMenu": [
+            [10, 25, 50, -1],
+            [10, 25, 50, "All"]
+        ],
         "aoColumnDefs": [
             { 'bSortable': false, 'aTargets': headersToDisable }
         ],
@@ -65,14 +77,14 @@ $(function () {
             [ 1, "desc" ]
         ],
         "pagingType": "full_numbers",
-//            "sScrollY": "650px",
-//        "autoWidth":true,
-        "sScrollX": "100%",
-        "sScrollXInner": "100%",
-        "bScrollCollapse": true
-//        "bPaginate": false,
-////        "bFilter": false,
-//        "bInfo" : false
+        "iDisplayLength": 50
+    }).on('length.dt', function (e, settings, len) {
+        body.children(".fixedHeader").each(function () {
+            $(this).remove();
+        });
+        table.fnAdjustColumnSizing();
+        ofh = new $.fn.dataTable.FixedHeader(table);
     });
+    var ofh = new $.fn.dataTable.FixedHeader(table);
 
 });

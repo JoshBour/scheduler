@@ -15,13 +15,25 @@ use Zend\ServiceManager\ServiceManagerAwareInterface;
 
 class Worker implements ServiceManagerAwareInterface
 {
-
-    private $addWorkerForm;
-
+    /**
+     * The entity manager
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
     private $entityManager;
 
+    /**
+     * The service manager
+     *
+     * @var ServiceManager
+     */
     private $serviceManager;
 
+    /**
+     * The worker repository
+     *
+     * @var \Worker\Repository\WorkerRepository
+     */
     private $workerRepository;
 
     /**
@@ -51,6 +63,32 @@ class Worker implements ServiceManagerAwareInterface
     }
 
     /**
+     * Update and save the workers
+     *
+     * @param array $entities
+     * @return bool
+     */
+    public function save($entities){
+        $em = $this->getEntityManager();
+        $workerRepository = $this->getWorkerRepository();
+        foreach ($entities as $entity) {
+            $worker = $workerRepository->find($entity['WorkerId']);
+            array_shift($entity);
+            foreach ($entity as $key => $value) {
+                if (!empty($value))
+                    $worker->{'set' . $key}($value);
+            }
+            $em->persist($worker);
+        }
+        try {
+            $em->flush();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * Remove a worker from the database.
      *
      * @param int $id
@@ -67,18 +105,6 @@ class Worker implements ServiceManagerAwareInterface
             return false;
         }
         return true;
-    }
-
-    /**
-     * Get the add worker form
-     *
-     * @return \Zend\Form\Form
-     */
-    public function getAddWorkerForm()
-    {
-        if (null === $this->addWorkerForm)
-            $this->addWorkerForm = $this->getServiceManager()->get('worker_add_form');
-        return $this->addWorkerForm;
     }
 
     /**

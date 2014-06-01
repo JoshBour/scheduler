@@ -12,6 +12,9 @@ namespace Schedule\Form;
 use Zend\Form\Form;
 
 class AddEntryForm extends Form{
+    /**
+     * The add entry form constructor
+     */
     public function __construct(){
         parent::__construct('addEntryForm');
 

@@ -26,12 +26,11 @@
         ->appendName('robots', "noindex, nofollow")
         ->appendName('language', 'en')
         ->appendName('googlebot', "noindex, nofollow");
-       # ->appendProperty('fb:app_id', '268335233334900')
-       # ->appendProperty('fb:admins', '1124061431')
     echo $this->headMeta();
 
     // We add the favicon and our stylesheets
     $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath('images/favicon.ico')))
+         ->headLink(array('rel' => 'gettext', 'type' => 'application/x-po', 'href' => $this->basePath('module/Application/language/'.\Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']).'.po')))
         ->prependStylesheet($this->basePath('css/jquery.dataTables.css'))
         ->prependStylesheet($this->basePath('css/jquery.datetimepicker.css'))
         ->prependStylesheet($this->basePath('css/style.css'));

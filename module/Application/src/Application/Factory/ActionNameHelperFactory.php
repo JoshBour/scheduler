@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Josh
- * Date: 16/3/2014
- * Time: 8:15 μμ
- */
-
 namespace Application\Factory;
 
 use Application\View\Helper\ActionName;

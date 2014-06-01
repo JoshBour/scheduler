@@ -26,10 +26,17 @@ class EntryAddFormFactory implements FactoryInterface{
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        /**
+         * @var \Doctrine\ORM\EntityManager $entityManager
+         */
         $entityManager = $serviceLocator->get('Doctrine\ORM\EntityManager');
-        $fieldset = new AddEntryFieldset($serviceLocator->get('translator'),$entityManager);
+        $formManager = $serviceLocator->get('FormElementManager');
+        /**
+         * @var AddEntryFieldset $fieldset
+         */
+        $fieldset        = $formManager->get('Schedule\Form\AddEntryFieldset');
         $form = new AddEntryForm();
-        $hydrator = new DoctrineHydrator($entityManager, '\Worker\Entity\Worker');
+        $hydrator = new DoctrineHydrator($entityManager, '\Schedule\Entity\Entry');
 
         $fieldset->setUseAsBaseFieldset(true)
             ->setHydrator($hydrator)

@@ -1,28 +1,15 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
-
 namespace Application\Controller;
 
 use Admin\Entity\Admin;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
 use Zend\Authentication\AuthenticationService;
+use Zend\View\Model\ViewModel;
 
-class IndexController extends AbstractActionController
+class IndexController extends BaseController
 {
     const CONTROLLER_NAME = "Application\Controller\Index";
     const ROUTE_LOGIN = "login";
     const ROUTE_SCHEDULE = "schedule";
-    const MESSAGE_INVALID_CREDENTIALS = 'The username/password combination is invalid.';
-    const MESSAGE_ALREADY_LOGGED = "You are already logged in!";
-    const MESSAGE_WELCOME = "Welcome back";
 
     /**
      * The authentication service.
@@ -38,12 +25,19 @@ class IndexController extends AbstractActionController
      */
     private $authStorage = null;
 
-    private $entityManager;
-
+    /**
+     * The login form
+     *
+     * @var \Zend\Form\Form
+     */
     private $loginForm;
 
-    private $translator;
-
+    /**
+     * The login action
+     * Route: /
+     *
+     * @return mixed|\Zend\Http\Response|ViewModel
+     */
     public function loginAction()
     {
         if (!$this->identity()) {
@@ -106,14 +100,14 @@ class IndexController extends AbstractActionController
             $identity = $authResult->getIdentity();
             $authService->getStorage()->write($identity);
         } else {
-            $this->flashMessenger()->addMessage($this->getTranslator()->translate(self::MESSAGE_INVALID_CREDENTIALS));
+            $this->flashMessenger()->addMessage($this->translate($this->vocabulary["MESSAGE_INVALID_CREDENTIALS"]));
             return $this->redirect()->toRoute(self::ROUTE_LOGIN);
         }
         if ($redirectUrl) {
             $redirectUrl = str_replace('__', '/', $redirectUrl);
             return $this->redirect()->toUrl('/' . $redirectUrl);
         } else {
-            $this->flashMessenger()->addMessage($this->getTranslator()->translate(self::MESSAGE_WELCOME) . ', ' . $username);
+            $this->flashMessenger()->addMessage($this->translate($this->vocabulary["MESSAGE_WELCOME"]) . ', ' . $username);
             return $this->redirect()->toRoute(self::ROUTE_SCHEDULE);
         }
     }
@@ -134,7 +128,7 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * Retrieve the authentication service
+     * Get the authentication service
      *
      * @return AuthenticationService
      */
@@ -147,7 +141,7 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * Retrieve the auth storage
+     * Get the auth storage
      *
      * @return \Application\Model\AuthStorage
      */
@@ -160,30 +154,14 @@ class IndexController extends AbstractActionController
     }
 
     /**
+     * Get the login form
+     *
      * @return \Zend\Form\Form
      */
-    public function getLoginForm(){
-        if(null === $this->loginForm)
+    public function getLoginForm()
+    {
+        if (null === $this->loginForm)
             $this->loginForm = $this->getServiceLocator()->get('login_form');
         return $this->loginForm;
-    }
-
-    /**
-     * @return \Zend\I18n\Translator\Translator
-     */
-    public function getTranslator()
-    {
-        if (null === $this->translator)
-            $this->translator = $this->getServiceLocator()->get('translator');
-        return $this->translator;
-    }
-
-    /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    public function getEntityManager(){
-        if(null === $this->entityManager)
-            $this->entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        return $this->entityManager;
     }
 }

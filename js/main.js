@@ -1,63 +1,54 @@
 $(function () {
-
-    function resetActiveField() {
-        $('td, .entry').each(function () {
-            $(this).removeClass('activeField');
-        })
-    }
-
-    function updateEditedField() {
-        var span = $('#editDone');
-        var activeField = $('.activeField');
-        var value = span.siblings().val();
-        if(activeField.hasClass('editColor')){
-            value = span.siblings('select').find('option:selected').text();
-            activeField.css('color',value);
-        }
-        activeField.html(value);
-        activeField.removeClass('activeField');
-        span.parent().hide();
-    }
-
     var body = $('body');
     var flash = $('#flash');
+    var isSchedulePage = body.hasClass('schedulePage');
     if (flash.is(':visible')) {
         flash.setRemoveTimeout(5000);
     }
+    var gt = new Gettext({ 'domain' : 'messages' });
 
-    $('#addWorkerToggle').on('click', function () {
-        $('#addWorkers').slideToggle();
+    // initialize the date and time pickers
+    $('#editPanel').find('.datetimeInput').each(function () {
+        $(this).timePicker();
+    });
+    $('#dateRangeStart, #dateRangeEnd').datePicker();
+    $('form .datetimeInput').elDateTimePicker();
+
+    $('span[class$="Toggle"]').on('click',function(){
+        var toggler = $(this).attr('class');
+        var element = $('#'+toggler.substr(0,toggler.length-6));
+        if (element.is(':visible')) {
+            element.slideToggle("normal", function () {
+                ofh = new $.fn.dataTable.FixedHeader(table);
+            });
+        } else {
+            element.slideToggle();
+            body.children(".fixedHeader").each(function () {
+                $(this).remove();
+            });
+        }
     });
 
-    $('#addAdminToggle').on('click', function () {
-        $('#addAdmin').slideToggle();
-    });
-
-    $('#dateRangeToggle').on('click', function () {
-        $('#dateRange').slideToggle();
-    });
-
-    $('#addEntryToggle').on('click', function () {
-        $('#addEntry').slideToggle();
-    });
-
-    $('#addExceptionToggle').on('click', function () {
-        $('#addException').slideToggle();
+    $(window).on('resize', function () {
+        body.children(".fixedHeader").each(function () {
+            $(this).remove();
+        });
+        ofh = new $.fn.dataTable.FixedHeader(table);
     });
 
     $('td').on('mouseover mouseout', function () {
         var cols = $('colgroup');
         var i = $(this).prevAll('td').length - 1;
         if (body.hasClass('schedulePage') || body.hasClass('changelogPage')) i++;
-        $(this).parent().toggleClass('hover')
+        $(this).parent().toggleClass('hover');
         $(cols[i]).toggleClass('hover');
-    })
+    });
 
     $('table').on('mouseleave', function () {
         $('colgroup').removeClass('hover');
     });
 
-    $('#dateRange .button').on('click', function () {
+    $('#dateRange').find('.button').on('click', function () {
         var start = $('#dateRangeStart').val();
         var end = $('#dateRangeEnd').val();
         if (start == '' || end == '') {
@@ -72,17 +63,13 @@ $(function () {
                 return null;
             }
             window.location.href = baseUrl + '/schedule/from/' + start + '/to/' + end;
+            return true;
         }
     });
 
-    $('#dateRangeStart, #dateRangeEnd').datetimepicker({
-        timepicker: false,
-        format: 'd-m-Y',
-        formatDate: 'd-m-Y'
-    });
 
-    $(document).on('submit', '#addWorkerForm, #addAdminForm, #addEntryForm, #addExceptionForm', function (e) {
-        if (confirm("Are you sure you want to submit the form? All unsaved changes will be lost!")) {
+    $(document).on('submit', '#addWorkerForm, #addAdminForm, #addEntryForm, #addExceptionForm', function () {
+        if (confirm(gt.gettext("Are you sure you want to submit the form? All unsaved changes will be lost!"))) {
             var form = $(this);
             var parent = form.parent();
             parent.toggleLoadingImage();
@@ -90,28 +77,15 @@ $(function () {
                 target: '#' + form.attr('id'),
                 type: "post",
                 success: function (responseText) {
-                    console.log(responseText);
                     if (responseText.redirect) {
                         location.reload();
                     }
-                    $('.datetimeInput').datetimepicker({
-                    });
+                    $('.datetimeInput').elDateTimePicker();
                     parent.toggleLoadingImage();
                 }
             });
         }
         return false;
-    });
-
-    $('#editPanel').find('.datetimeInput').each(function () {
-        $(this).datetimepicker({
-            datepicker: false,
-            format: 'H:i'
-        });
-    });
-
-
-    $('form .datetimeInput').datetimepicker({
     });
 
     $(document).on('dblclick', '.editableTable td', function () {
@@ -126,7 +100,7 @@ $(function () {
             var width = td.outerWidth();
             editPanel.css('width', width - 1);
             editPanel.css('margin-left', position.left).show();
-            editPanel.css('top', position.top + td.outerHeight());
+            editPanel.css('top', position.top + td.outerHeight() + 85)
             if (td.hasClass('editDatetime')) {
                 if (content != '') {
                     var splitDate = content.split('-');
@@ -137,15 +111,13 @@ $(function () {
                 var input = $('<input type="text" id="mydate" value="' + content + '"></input>');
                 editInput.replaceWith(input);
                 editPanel.css('width', width - 1);
-                input.css('width', width - 10).focus();
-                editPanel.children('input').datetimepicker({
-                    timepicker: false,
-                    format: 'd-m-Y',
-                    formatDate: 'd-m-Y'
-                });
+                input.css('width', width - 10).datePicker().focus();
+//                editPanel.children('input')
             } else if (td.hasClass('editColor')) {
                 var input = $('.colorSelect');
-                input.find('option').filter(function () { return $(this).html() == content; }).attr('selected','selected');
+                input.find('option').filter(function () {
+                    return $(this).html() == content;
+                }).attr('selected', 'selected');
                 editInput.replaceWith(input);
                 input.css('width', width - 10).focus();
             } else {
@@ -169,16 +141,26 @@ $(function () {
     });
 
     $('#saveChanges').on('click', function () {
-        var table = $('.editableTable');
         var entities = [];
-        var id = "";
-        if (table.length != 0) {
-            id = table.attr('id');
-            var separator = id.length - 1; // we subtract one because of the plural
-            table.find('tbody tr').each(function () {
-                var tr = $(this);
-                var entity = {};
-                tr.children('td').each(function () {
+        var table = isSchedulePage ? $('.scheduleTable'):$('.editableTable');
+        var id = table.attr('id');
+        table.find('tbody .unsaved').each(function () {
+            var that = $(this);
+            var entity = {};
+            if(isSchedulePage){
+                var entryId = that.children('.entryId').html();
+                var entryValue = $.trim(that.children('.entryValue').html());
+                if (!(entryValue == "-" && entryId.length == 0) && that.children('.workerName').length == 0 && that.children('.workerPosition').length == 0) {
+                    entity["entryId"] = entryId.length != 0 ? entryId : 0;
+                    entity["workerId"] = that.children('.workerId').html();
+                    entity["exception"] = that.children('.exception').html();
+                    entity["startTime"] = that.children('.startDate').html() + " " + that.children('.startTime').html();
+                    entity["endTime"] = that.children('.endDate').html() + " " + that.children('.endTime').html();
+                    entities.push(entity);
+                }
+            }else{
+                var separator = id.length - 1; // we subtract one because of the plural
+                that.children('td').each(function () {
                     var td = $(this);
                     if (!td.hasClass('delete')) {
                         var field = td.attr('class').split(' ')[0].substr(separator);
@@ -190,44 +172,30 @@ $(function () {
                     }
                 });
                 entities.push(entity);
-            });
-        } else {
-            table = $('#scheduleTable');
-            id = "schedule";
-            table.find('tbody .entry').each(function () {
-                var entity = {};
-                var entry = $(this);
-                var entryId = entry.children('.entryId').html();
-                var entryValue = $.trim(entry.children('.entryValue').html());
-                if (!(entryValue == "-" && entryId.length == 0) && entry.children('.workerName').length == 0 && entry.children('.workerPosition').length == 0) {
-                    entity["entryId"] = entryId.length != 0 ? entryId : 0;
-                    entity["workerId"] = entry.children('.workerId').html();
-                    entity["exception"] = entry.children('.exception').html();
-                    entity["startTime"] = entry.children('.startDate').html() + " " + entry.children('.startTime').html();
-                    entity["endTime"] = entry.children('.endDate').html() + " " + entry.children('.endTime').html();
-                    entities.push(entity);
-                }
-            });
-        }
-        console.log(entities);
-        $.ajax({
-            url: baseUrl + '/' + id + '/save',
-            type: "POST",
-            data: {
-                "entities": entities
             }
-        }).success(function (data) {
-            if (data.success == 1) {
-                location.reload();
-            }
-            addMessage(data.message);
-        }).error(function () {
-            addMessage('Something with wrong, please try again.');
         });
+        if (entities.length > 0) {
+            $.ajax({
+                url: baseUrl + '/' + id + '/save',
+                type: "POST",
+                data: {
+                    "entities": entities
+                }
+            }).success(function (data) {
+                if (data.success == 1) {
+                    location.reload();
+                }
+                addMessage(data.message);
+            }).error(function () {
+                addMessage(gt.gettext("Something with wrong, please try again."));
+            });
+        }else{
+            addMessage(gt.gettext("There are no changes to save."));
+        }
     });
 
-    if (body.hasClass('schedulePage')) {
-        var table = $('#scheduleTable');
+    if (isSchedulePage) {
+        var table = $('.scheduleTable');
         var headersToDisable = [2];
         var headerCount = 2;
         var headers = table.find('thead th').each(function () {
@@ -235,8 +203,12 @@ $(function () {
         });
         headersToDisable.pop();
         headersToDisable.pop();
-        table.dataTable({
+        table = table.dataTable({
 //            stateSave: true,
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
             "aoColumnDefs": [
                 { 'bSortable': false, 'aTargets': headersToDisable }
             ],
@@ -244,14 +216,13 @@ $(function () {
                 [ 1, "desc" ]
             ],
             "pagingType": "full_numbers",
-//            "sScrollY": "650px",
-//        "autoWidth":true,
-            "sScrollX": "100%",
-            "sScrollXInner": "100%",
-            "bScrollCollapse": true
-//        "bPaginate": false,
-////        "bFilter": false,
-//        "bInfo" : false
+            "iDisplayLength": 50
+        }).on('length.dt', function (e, settings, len) {
+            body.children(".fixedHeader").each(function () {
+                $(this).remove();
+            });
+            table.fnAdjustColumnSizing();
+            ofh = new $.fn.dataTable.FixedHeader(table);
         });
 
         $('.entry').on('mouseenter mouseleave', function () {
@@ -268,7 +239,19 @@ $(function () {
                 });
         });
 
-        $(document).on('dblclick', '#scheduleTable .entry', function (e) {
+        if($(document).width() <= 1280){
+            table.css('table-layout','auto');
+        }
+
+        $('th').each(function(){
+            var th = $(this);
+            var split = th.text().split(' ');
+            if(split[0] == "Sun"){
+                $("td, th").filter(":nth-child("+ (th.index()+1) + ")").css('background-color',"#e1e1e1");
+            }
+        });
+
+        $(document).on('dblclick', '.scheduleTable .entry', function (e) {
             var entry = $(this);
             if (!entry.hasClass('activeField') && !entry.hasClass('delete')) {
                 resetActiveField();
@@ -299,7 +282,6 @@ $(function () {
             var exception = editPanel.find('select[name="entry[exception]"] option:selected').text();
             var startTime = editPanel.find('input[name="entry[startTime]"]').val();
             var endTime = editPanel.find('input[name="entry[endTime]"]').val();
-            console.log(exception);
             if (span.attr('id') == 'formEditDone') {
                 activeField.find('.exception').html(exception);
                 activeField.find('.startTime').html(startTime);
@@ -317,12 +299,37 @@ $(function () {
                 activeField.find('.endTime').html("");
                 activeField.children('.entryValue').html(" - ");
             }
+            activeField.addClass('unsaved');
             editPanel.hide();
         });
+    }else{
+        table = $('.editableTable');
+        table = $('.editableTable, #changelogs').dataTable({
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            "aoColumnDefs": [
+                { 'bSortable': false, 'aTargets': table.find('th').length-1 }
+            ],
+            "pagingType": "full_numbers",
+            "dom": 'C<"clear">lfrtip',
+            colVis: {
+                order: 'alpha'
+            },
+            "iDisplayLength": 50
+        }).on('length.dt', function (e, settings, len) {
+            body.children(".fixedHeader").each(function () {
+                $(this).remove();
+            });
+            table.fnAdjustColumnSizing();
+            ofh = new $.fn.dataTable.FixedHeader(table);
+        });
     }
+    var ofh = new $.fn.dataTable.FixedHeader(table);
 
     $('td.delete').on('click', function () {
-            if (confirm("Are you sure about this action?")) {
+            if (confirm(gt.gettext("Are you sure about this action?"))) {
                 var table = $('.editableTable');
                 var td = $(this);
                 var url = table.attr('id');
@@ -339,7 +346,7 @@ $(function () {
                     }
                     addMessage(data.message);
                 }).error(function () {
-                    addMessage('Something with wrong, please try again.');
+                    addMessage(gt.gettext("Something with wrong, please try again."));
                 });
             }
         }

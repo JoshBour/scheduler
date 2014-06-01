@@ -9,33 +9,20 @@
 namespace Admin\Form;
 
 
-use Zend\Form\Fieldset;
+use Application\Form\BaseFieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\Validator\NotEmpty;
+use Zend\Validator\Regex;
+use Zend\Validator\StringLength;
 
-class AddAdminFieldset extends Fieldset implements InputFilterProviderInterface
+class AddAdminFieldset extends BaseFieldset implements InputFilterProviderInterface
 {
     /**
-     * @var \Zend\I18n\Translator\Translator
+     * Add admin fieldset constructor
      */
-    private $translator;
-
-    private $entityManager;
-
-    const LABEL_RELATED_WORKER = "Related Worker: ";
-    const ERROR_USERNAME_EMPTY = "The username can't be empty.";
-    const ERROR_USERNAME_INVALID_LENGTH = "The username length must be between between 4-15 characters long.";
-    const ERROR_USERNAME_EXISTS = "The username already exists, please try another one.";
-    const ERROR_USERNAME_INVALID_PATTERN = "The name can only contain letters, numbers, underscores and no spaces between.";
-    const ERROR_PASSWORD_EMPTY = "The password can't be empty.";
-    const ERROR_PASSWORD_INVALID_LENGTH = "The password length must be between between 4-20 characters long.";
-
-    public function __construct($translator, $entityManager)
+    public function init()
     {
         parent::__construct('admin');
-
-        $this->translator = $translator;
-        $this->entityManager = $entityManager;
-
 
         $this->add(array(
             'name' => 'username',
@@ -52,12 +39,12 @@ class AddAdminFieldset extends Fieldset implements InputFilterProviderInterface
                 'type' => 'DoctrineModule\Form\Element\ObjectSelect',
                 'name' => 'relatedWorker',
                 'options' => array(
-                    'object_manager' => $this->entityManager,
-                    'empty_option' => $this->translator->translate('None'),
+                    'object_manager' => $this->getEntityManager(),
+                    'empty_option' => $this->getTranslator()->translate($this->getVocabulary()["EMPTY_OPTION"]),
                     'target_class' => 'Worker\Entity\Worker',
                     'property' => 'surname',
                     'disable_inarray_validator' => true,
-                    'label' => $this->translator->translate(self::LABEL_RELATED_WORKER)
+                    'label' => $this->getTranslator()->translate($this->getVocabulary()["LABEL_RELATED_WORKER"])
                 )
             )
         );
@@ -80,7 +67,7 @@ class AddAdminFieldset extends Fieldset implements InputFilterProviderInterface
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_USERNAME_EMPTY)
+                                NotEmpty::IS_EMPTY => $this->getTranslator()->translate($this->getVocabulary()["ERROR_USERNAME_EMPTY"])
                             )
                         )
                     ),
@@ -90,17 +77,17 @@ class AddAdminFieldset extends Fieldset implements InputFilterProviderInterface
                             'min' => 4,
                             'max' => 15,
                             'messages' => array(
-                                \Zend\Validator\StringLength::INVALID => $this->translator->translate(self::ERROR_USERNAME_INVALID_LENGTH)
+                                StringLength::INVALID => $this->getTranslator()->translate($this->getVocabulary()["ERROR_USERNAME_INVALID_LENGTH"])
                             )
                         )
                     ),
                     array(
                         'name' => 'DoctrineModule\Validator\NoObjectExists',
                         'options' => array(
-                            'object_repository' => $this->entityManager->getRepository('Admin\Entity\Admin'),
+                            'object_repository' => $this->getEntityManager()->getRepository('Admin\Entity\Admin'),
                             'fields' => 'username',
                             'messages' => array(
-                                'objectFound' => $this->translator->translate(self::ERROR_USERNAME_EXISTS)
+                                'objectFound' => $this->getTranslator()->translate($this->getVocabulary()["ERROR_USERNAME_EXISTS"])
                             )
                         )
                     ),
@@ -109,7 +96,7 @@ class AddAdminFieldset extends Fieldset implements InputFilterProviderInterface
                         'options' => array(
                             'pattern' => '/^[a-zA-Z0-9_]{4,16}$/',
                             'messages' => array(
-                                \Zend\Validator\Regex::NOT_MATCH => $this->translator->translate(self::ERROR_USERNAME_INVALID_PATTERN)
+                                Regex::NOT_MATCH => $this->getTranslator()->translate($this->getVocabulary()["ERROR_USERNAME_INVALID_PATTERN"])
                             )
                         )
                     )
@@ -127,7 +114,7 @@ class AddAdminFieldset extends Fieldset implements InputFilterProviderInterface
                         'break_chain_on_failure' => true,
                         'options' => array(
                             'messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => $this->translator->translate(self::ERROR_PASSWORD_EMPTY)
+                                NotEmpty::IS_EMPTY => $this->getTranslator()->translate($this->getVocabulary()["ERROR_PASSWORD_EMPTY"])
                             )
                         )
                     ),
@@ -138,7 +125,7 @@ class AddAdminFieldset extends Fieldset implements InputFilterProviderInterface
                             'min' => 4,
                             'max' => 20,
                             'messages' => array(
-                                \Zend\Validator\StringLength::INVALID => $this->translator->translate(self::ERROR_PASSWORD_INVALID_LENGTH)
+                                StringLength::INVALID => $this->getTranslator()->translate($this->getVocabulary()["ERROR_PASSWORD_INVALID_LENGTH"])
                             )
                         )
                     ),

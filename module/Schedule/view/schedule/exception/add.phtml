@@ -1,17 +1,20 @@
 <?php
 $form->prepare();
-$form->setAttribute('action', $this->url('exceptions/add'));
+/**
+ * @var \Zend\Form\Fieldset $fieldset
+ */
 $fieldset = $form->get('exception');
+$form->setAttribute('action', $this->url('exceptions/add'));
 echo $this->form()->openTag($form);
 echo $this->formHidden($form->get('security'));
 ?>
 <table>
-    <caption>Add a New Entry</caption>
+    <caption><?php echo $this->translate("Add a New Entry"); ?></caption>
     <thead>
     <tr>
-        <th>Name*</th>
-        <th>Color*</th>
-        <th>Add</th>
+        <th><?php echo $this->translate("Name"); ?>*</th>
+        <th><?php echo $this->translate("Color"); ?>*</th>
+        <th><?php echo $this->translate("Add"); ?></th>
     </tr>
     </thead>
     <tbody>

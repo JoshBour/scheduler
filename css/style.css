@@ -52,6 +52,12 @@
         width:100%;
         border-collapse: collapse;
         border-spacing: 0;
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+
+    th,td{
+        word-wrap: break-word;
     }
 
     textarea{
@@ -177,6 +183,12 @@
         text-align: left;
     }
 
+    .tableWrapper{
+        /*overflow-x: hidden;*/
+        border-top: 1px dashed #ccc;
+        margin-top: 10px;
+    }
+
     th{
         vertical-align: middle;
         padding:10px;
@@ -211,12 +223,12 @@
         border-top: 1px solid #999;
         /*background-color:#f2f2f2;*/
         background: #F1F1F4 url(../images/secondary_bar.png) repeat-x;
-        background: -moz-linear-gradient(top, rgba(250,250,250,0.4) 0%, rgba(200,200,200,0.4) 100%);
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(250,250,250,0.4)), color-stop(100%,rgba(200,200,200,0.4)));
-        background: -webkit-linear-gradient(top, rgba(250,250,250,0.4) 0%,rgba(200,200,200,0.4) 100%);
-        background: -o-linear-gradient(top, rgba(250,250,250,0.4) 0%,rgba(200,200,200,0.4) 100%);
-        background: -ms-linear-gradient(top, rgba(250,250,250,0.4) 0%,rgba(200,200,200,0.4) 100%);
-        background: linear-gradient(to bottom, rgba(250,250,250,0.4) 0%,rgba(200,200,200,0.4) 100%);
+        background: -moz-linear-gradient(top, rgba(250,250,250,1) 0%, rgba(230,230,230,1) 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(250,250,250,1)), color-stop(100%,rgba(230,230,230,1)));
+        background: -webkit-linear-gradient(top, rgba(250,250,250,1) 0%,rgba(230,230,230,1) 100%);
+        background: -o-linear-gradient(top, rgba(250,250,250,1) 0%,rgba(230,230,230,1) 100%);
+        background: -ms-linear-gradient(top, rgba(250,250,250,1) 0%,rgba(230,230,230,1) 100%);
+        background: linear-gradient(to bottom, rgba(250,250,250,1) 0%,rgba(230,230,230,1) 100%);
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#111', endColorstr='#0f0f0f',GradientType=0 );
     }
 
@@ -257,7 +269,7 @@
         text-align: right;
     }
 
-    #optionPanel span{
+    #optionPanel span, #optionPanel a{
         display: inline-block;
         padding: 10px 20px;
         background: #F1F1F4 url(../images/secondary_bar.png) repeat-x;
@@ -266,14 +278,15 @@
         border: 1px solid #999;
     }
 
-    #optionPanel span:hover{
+    #optionPanel span:hover, #optionPanel a:hover{
         background: #F1F1F4 url(../images/secondary_bar-hover.png) repeat-x;
     }
 
     /* ===================================================== */
     /*                     Workers Page                      */
 
-        #addWorkers, #addEntry, #addException{
+        #addWorker, #addEntry, #addException, #addAdmin{
+            display:none;
             margin-bottom:15px;
         }
 
@@ -322,16 +335,18 @@
             margin-left:10px;
         }
 
-        #scheduleTable td{
+        .scheduleTable td{
             padding:0;
         }
 
 
         .entry{
-            padding:10px;
+            padding:10px 0;
             vertical-align: middle;
             border-bottom: 1px solid #ccc;
             display: inline-block;
+            width:100%;
+            word-wrap: break-word;
         }
 
         .entry.highlighted{

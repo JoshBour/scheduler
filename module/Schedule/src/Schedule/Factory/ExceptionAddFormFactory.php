@@ -8,16 +8,16 @@
 
 namespace Schedule\Factory;
 
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
+use Schedule\Entity\Exception;
+use Schedule\Form\AddExceptionFieldset;
+use Schedule\Form\AddExceptionForm;
+use Zend\InputFilter\InputFilter;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\InputFilter\InputFilter;
-use Schedule\Form\AddExceptionForm;
-use Schedule\Form\AddExceptionFieldset;
-use Schedule\Entity\Exception;
 
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-
-class ExceptionAddFormFactory implements FactoryInterface{
+class ExceptionAddFormFactory implements FactoryInterface
+{
     /**
      * Create service
      *
@@ -26,8 +26,15 @@ class ExceptionAddFormFactory implements FactoryInterface{
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        /**
+         * @var \Doctrine\ORM\EntityManager $entityManager
+         */
         $entityManager = $serviceLocator->get('Doctrine\ORM\EntityManager');
-        $fieldset = new AddExceptionFieldset($serviceLocator->get('translator'),$entityManager);
+        $formManager = $serviceLocator->get('FormElementManager');
+        /**
+         * @var AddExceptionFieldset $fieldset
+         */
+        $fieldset = $formManager->get('Schedule\Form\AddExceptionFieldset');
         $form = new AddExceptionForm();
         $hydrator = new DoctrineHydrator($entityManager, '\Schedule\Entity\Exception');
 

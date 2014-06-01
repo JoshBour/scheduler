@@ -12,6 +12,29 @@ function addMessage(message) {
     flash.setRemoveTimeout(5000);
 }
 
+
+function resetActiveField() {
+    $('td, .entry').each(function () {
+        $(this).removeClass('activeField');
+    })
+}
+
+function updateEditedField() {
+    var span = $('#editDone');
+    var activeField = $('.activeField');
+    var input = span.siblings();
+    var value = input.val();
+    if (activeField.hasClass('editColor')) {
+        value = span.siblings('select').find('option:selected').text();
+        activeField.css('color', value);
+    }
+    activeField.html(value);
+    input.val('');
+    activeField.removeClass('activeField');
+    activeField.closest('tr').addClass('unsaved');
+    span.parent().hide();
+}
+
 function daysBetween(date1, date2) {
 
     // The number of milliseconds in one day
@@ -86,3 +109,54 @@ function daysBetween(date1, date2) {
         return element;
     };
 })(jQuery);
+
+// creates a date only datetimepicker
+(function ($) {
+    $.fn.datePicker = function () {
+        // set the default value for focusedDiv
+        var element = $(this);
+        // add the shadow to the body
+        element.datetimepicker({
+            timepicker: false,
+            format: 'd-m-Y',
+            formatDate: 'd-m-Y',
+            closeOnDateSelect:true,
+            lang: 'el'
+        });
+
+        return element;
+    };
+})(jQuery);
+
+// creates a time only datetimepicker
+(function ($) {
+    $.fn.timePicker = function () {
+        // set the default value for focusedDiv
+        var element = $(this);
+        // add the shadow to the body
+        element.datetimepicker({
+            datepicker: false,
+            format: 'H:i',
+            closeOnDateSelect:true,
+            lang: 'el'
+        });
+
+        return element;
+    };
+})(jQuery);
+
+// create a default localized datetimepicker
+(function ($) {
+    $.fn.elDateTimePicker = function () {
+        // set the default value for focusedDiv
+        var element = $(this);
+        // add the shadow to the body
+        element.datetimepicker({
+            closeOnTimeSelect:true,
+            lang: 'el'
+        });
+
+        return element;
+    };
+})(jQuery);
+

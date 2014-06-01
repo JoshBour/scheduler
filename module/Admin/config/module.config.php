@@ -71,7 +71,8 @@ return array(
     ),
     'service_manager' => array(
         'factories' => array(
-            'admin_add_form' => __NAMESPACE__ . '\Factory\AdminAddFormFactory'
+            'admin_add_form' => __NAMESPACE__ . '\Factory\AdminAddFormFactory',
+            'login_form' => __NAMESPACE__ . '\Factory\LoginFormFactory',
         ),
         'invokables' => array(
             'admin_service' => __NAMESPACE__ . '\Service\Admin'

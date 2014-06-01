@@ -1,18 +1,21 @@
 <?php
+/**
+ * @var \Zend\Form\Fieldset $fieldset
+ */
+$fieldset = $form->get('admin');
 $form->prepare();
 $form->setAttribute('action', $this->url('admins/add'));
-$fieldset = $form->get('admin');
 echo $this->form()->openTag($form);
 echo $this->formHidden($form->get('security'));
 ?>
 <table>
-    <caption>Add a New Admin</caption>
+    <caption><?php echo $this->translate("Add a New Admin"); ?></caption>
     <thead>
     <tr>
-        <th>Username*</th>
-        <th>Password*</th>
-        <th>Worker Profile</th>
-        <th>Add</th>
+        <th><?php echo $this->translate("Username"); ?>*</th>
+        <th><?php echo $this->translate("Password"); ?>*</th>
+        <th><?php echo $this->translate("Worker Profile"); ?></th>
+        <th><?php echo $this->translate("Add"); ?></th>
     </tr>
     </thead>
     <tbody>

@@ -12,6 +12,9 @@ namespace Worker\Form;
 use Zend\Form\Form;
 
 class AddWorkerForm extends Form{
+    /**
+     * The add worker form constructor
+     */
     public function __construct(){
         parent::__construct('addWorkerForm');
 

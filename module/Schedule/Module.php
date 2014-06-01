@@ -20,6 +20,18 @@ class Module
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
     }
+//
+//    public function getFormElementConfig() {
+//        return array(
+//            'factories' => array(
+//                'EntryFieldset' => function($sm) {
+//                        $serviceLocator = $sm->getServiceLocator();
+//                        $fieldset = new \Schedule\Form\AddEntryFieldset();
+//                        return $fieldset;
+//                    },
+//            )
+//        );
+//    }
 
     public function getConfig()
     {
@@ -29,6 +41,9 @@ class Module
     public function getAutoloaderConfig()
     {
         return array(
+            'Zend\Loader\ClassMapAutoloader' => array(
+                __DIR__ . '/autoload_classmap.php',
+            ),
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,

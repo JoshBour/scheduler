@@ -9,52 +9,57 @@
 namespace Schedule\Controller;
 
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Application\Controller\BaseController;
+use Schedule\Model\ExcelGenerator;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
-class IndexController extends AbstractActionController
+class IndexController extends BaseController
 {
-    const MESSAGE_ENTRY_CREATED = "The entry has been created successfully.";
-    const MESSAGE_ENTRIES_SAVED = "The entries have been saved successfully.";
-    const ERROR_ENTRIES_NOT_SAVED = "There was an error when saving the entries, please try again.";
+    const LAYOUT_NO_HEADER = "layout/no-header";
 
+    /**
+     * The add entry form
+     *
+     * @var \Zend\Form\Form
+     */
     private $addEntryForm;
 
-    private $entityManager;
-
+    /**
+     * The entry repository
+     *
+     * @var \Schedule\Repository\EntryRepository
+     */
     private $entryRepository;
 
-    private $translator;
-
-    private $workerRepository;
-
+    /**
+     * The entry service
+     *
+     * @var \Schedule\Service\Entry
+     */
     private $entryService;
 
+    /**
+     * The worker repository
+     *
+     * @var \Worker\Repository\WorkerRepository
+     */
+    private $workerRepository;
+
+    /**
+     * The schedule list action
+     * Route: /schedule
+     *
+     * @return ViewModel
+     */
     public function listAction()
     {
-        if(!$this->identity()) $this->layout()->setTemplate('layout/no-header');
-        $startDate = new \DateTime($this->params()->fromRoute('startDate', 'first day of this month'));
-        $endDate = new \DateTime($this->params()->fromRoute('endDate', 'last day of this month'));
-        $workers = $this->getWorkerRepository()->findAll();
-        $dates = array();
-        $interval = $startDate->diff($endDate)->days + 1;
-
-        /**
-         * @var \Worker\Entity\Worker $worker
-         */
-        foreach($workers as $worker){
-            $id = $worker->getEncodedId();
-            $startDateClone = clone $startDate;
-            for ($j = 0; $j < $interval; $j++) {
-                $dates[$id][$startDateClone->format('d-m-Y')] = array();
-                $startDateClone->modify('+1 day');
-            }
-            $entries = $this->getEntryRepository()->findEntriesBetweenDates($startDate, $endDate,$worker);
-            foreach($entries as $entry){
-                $dates[$id][$entry->getStartTime()->format('d-m-Y')][] = $entry;
-            }
-        }
+        if (!$this->identity()) $this->layout()->setTemplate(self::LAYOUT_NO_HEADER);
+        $startDate = new \DateTime($this->params()->fromRoute('startDate', strftime('%d-%m-%Y', strtotime('first day of this month'))));
+        $endDate = new \DateTime($this->params()->fromRoute('endDate', strftime('%d-%m-%Y', strtotime('last day of this month'))));
+        $endDate->modify("+23 Hour");
+        $endDate->modify("+59 Minute");
+        $dates = $this->generateDates($startDate, $endDate);
         return new ViewModel(array(
             "startDate" => $startDate,
             "endDate" => $endDate,
@@ -65,15 +70,23 @@ class IndexController extends AbstractActionController
         ));
     }
 
+    /**
+     * The schedule save action
+     * Route: /schedule/save
+     * Only accessible via xmlHttpRequest
+     * Requires login
+     *
+     * @return array|JsonModel
+     */
     public function saveAction()
     {
         if ($this->getRequest()->isXmlHttpRequest() && $this->identity()) {
             $success = 1;
-            $message = self::MESSAGE_ENTRIES_SAVED;
+            $message = $this->translate($this->vocabulary["MESSAGE_ENTRIES_SAVED"]);
             $entities = $this->params()->fromPost('entities');
             if (!$this->getEntryService()->save($entities)) {
                 $success = 0;
-                $message = self::ERROR_ENTRIES_NOT_SAVED;
+                $message = $this->translate($this->vocabulary["ERROR_ENTRIES_NOT_SAVED"]);
             }
             return new JsonModel(array(
                 "success" => $success,
@@ -84,6 +97,14 @@ class IndexController extends AbstractActionController
         }
     }
 
+    /**
+     * The schedule add action
+     * Route: /schedule/add
+     * Only accessible via xmlHttpRequest
+     * Requires login
+     *
+     * @return array|JsonModel
+     */
     public function addAction()
     {
         /**
@@ -97,7 +118,7 @@ class IndexController extends AbstractActionController
                 $form = $this->getAddEntryForm();
                 $worker = $service->create($data, $form);
                 if ($worker) {
-                    $this->flashMessenger()->addMessage($this->getTranslator()->translate(static::MESSAGE_ENTRY_CREATED));
+                    $this->flashMessenger()->addMessage($this->translate($this->vocabulary["MESSAGE_ENTRY_CREATED"]));
                     return new JsonModel(array('redirect' => true));
                 } else {
                     $viewModel = new ViewModel(array("form" => $form));
@@ -109,11 +130,61 @@ class IndexController extends AbstractActionController
         return $this->notFoundAction();
     }
 
-    public function removeAction()
+
+    public function exportAction()
     {
+        $startDate = new \DateTime($this->params()->fromRoute('startDate', strftime('%d-%m-%Y', strtotime('first day of this month'))));
+        $endDate = new \DateTime($this->params()->fromRoute('endDate', strftime('%d-%m-%Y', strtotime('last day of this month'))));
+        $endDate->modify("+23 Hour");
+        $endDate->modify("+59 Minute");
+        $dates = $this->generateDates($startDate, $endDate);
+
+        $name = ExcelGenerator::exportExcel($dates, clone $startDate, clone $endDate);
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . "schedule-" . $startDate->format('d-m-Y') . '-' . $endDate->format('d-m-Y') . ".xlsx" . '"');
+        header('Cache-Control: max-age=0');
+        readfile($name);
+
+        exit();
+        // http://stackoverflow.com/questions/18997710/how-to-access-files-in-data-folder-in-zend-framework
     }
 
     /**
+     * Generate the schedule worker-date array
+     *
+     * @param \DateTime $startDate
+     * @param \DateTime $endDate
+     * @return array
+     */
+    private function generateDates($startDate, $endDate)
+    {
+        $workers = $this->getWorkerRepository()->findAllNonReleasedWorkers($startDate, $endDate);
+        $dates = array();
+        $interval = $startDate->diff($endDate)->days + 1;
+        /**
+         * @var \Worker\Entity\Worker $worker
+         */
+        foreach ($workers as $worker) {
+            $id = $worker->getEncodedId();
+            $startDateClone = clone $startDate;
+            for ($j = 0; $j < $interval; $j++) {
+                $dates[$id][$startDateClone->format('d-m-Y')] = array();
+                $startDateClone->modify('+1 day');
+            }
+            $entries = $this->getEntryRepository()->findEntriesBetweenDates($startDate, $endDate, $worker);
+            /**
+             * @var \Schedule\Entity\Entry $entry
+             */
+            foreach ($entries as $entry) {
+                $dates[$id][$entry->getStartTime()->format('d-m-Y')][] = $entry;
+            }
+        }
+        return $dates;
+    }
+
+    /**
+     * Get the add entry form
+     *
      * @return \Zend\Form\Form
      */
     public function getAddEntryForm()
@@ -136,42 +207,26 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    public function getEntityManager()
-    {
-        if (null === $this->entityManager)
-            $this->entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        return $this->entityManager;
-    }
-
-    /**
-     * @return \Zend\I18n\Translator\Translator
-     */
-    public function getTranslator()
-    {
-        if (null === $this->translator)
-            $this->translator = $this->getServiceLocator()->get('translator');
-        return $this->translator;
-    }
-
-    /**
+     * Get the entry repository
+     *
      * @return \Schedule\Repository\EntryRepository
      */
     public function getEntryRepository()
     {
         if (null === $this->entryRepository)
-            $this->entryRepository = $this->getEntityManager()->getRepository('Schedule\Entity\Entry');
+            $this->entryRepository = $this->entityManager->getRepository('Schedule\Entity\Entry');
         return $this->entryRepository;
     }
 
     /**
-     * @return \Doctrine\ORM\EntityRepository
+     * Get the worker repository
+     *
+     * @return \Worker\Repository\WorkerRepository
      */
     public function getWorkerRepository()
     {
         if (null == $this->workerRepository)
-            $this->workerRepository = $this->getEntityManager()->getRepository('Worker\Entity\Worker');
+            $this->workerRepository = $this->entityManager->getRepository('Worker\Entity\Worker');
         return $this->workerRepository;
     }
 } 

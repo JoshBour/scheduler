@@ -32,12 +32,12 @@ if (!empty($messages)) :
     <header>
         <nav>
             <ul>
-                <li><a href="<?php echo $this->url('workers'); ?>"<?php echo $route == "workers" ? ' class="active"' : ''; ?>>Workers</a></li>
-                <li><a href="<?php echo $this->url('schedule'); ?>"<?php echo $route == "schedule" ? ' class="active"' : ''; ?>>Schedule</a></li>
-                <li><a href="<?php echo $this->url('admins'); ?>"<?php echo $route == "admins" ? ' class="active"' : ''; ?>>Admins</a></li>
-                <li><a href="<?php echo $this->url('changelogs'); ?>"<?php echo $route == "changelogs" ? ' class="active"' : ''; ?>>Changelogs</a></li>
-                <li><a href="<?php echo $this->url('exceptions'); ?>"<?php echo $route == "exceptions" ? ' class="active"' : ''; ?>>Exceptions</a></li>
-                <li><a href="<?php echo $this->url('logout'); ?>">Logout</a></li>
+                <li><a href="<?php echo $this->url('workers'); ?>"<?php echo $route == "workers" ? ' class="active"' : ''; ?>><?php echo $this->translate("Workers"); ?></a></li>
+                <li><a href="<?php echo $this->url('schedule'); ?>"<?php echo $route == "schedule" ? ' class="active"' : ''; ?>><?php echo $this->translate("Schedule"); ?></a></li>
+                <li><a href="<?php echo $this->url('admins'); ?>"<?php echo $route == "admins" ? ' class="active"' : ''; ?>><?php echo $this->translate("Admins"); ?></a></li>
+                <li><a href="<?php echo $this->url('changelogs'); ?>"<?php echo $route == "changelogs" ? ' class="active"' : ''; ?>><?php echo $this->translate("Changelogs"); ?></a></li>
+                <li><a href="<?php echo $this->url('exceptions'); ?>"<?php echo $route == "exceptions" ? ' class="active"' : ''; ?>><?php echo $this->translate("Exceptions"); ?></a></li>
+                <li><a href="<?php echo $this->url('logout'); ?>"><?php echo $this->translate("Logout"); ?></a></li>
             </ul>
         </nav>
     </header>

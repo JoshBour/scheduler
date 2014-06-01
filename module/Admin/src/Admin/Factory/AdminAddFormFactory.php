@@ -8,16 +8,16 @@
 
 namespace Admin\Factory;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\InputFilter\InputFilter;
+use Admin\Entity\Admin;
 use Admin\Form\AddAdminFieldset;
 use Admin\Form\AddAdminForm;
-use Admin\Entity\Admin;
-
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
+use Zend\InputFilter\InputFilter;
+use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
-class AdminAddFormFactory implements FactoryInterface{
+class AdminAddFormFactory implements FactoryInterface
+{
     /**
      * Create service
      *
@@ -30,7 +30,11 @@ class AdminAddFormFactory implements FactoryInterface{
          * @var \Doctrine\ORM\EntityManager $entityManager
          */
         $entityManager = $serviceLocator->get('Doctrine\ORM\EntityManager');
-        $fieldset = new AddAdminFieldset($serviceLocator->get('translator'),$entityManager);
+        $formManager = $serviceLocator->get('FormElementManager');
+        /**
+         * @var AddAdminFieldset $fieldset
+         */
+        $fieldset = $formManager->get('Admin\Form\AddAdminFieldset');
         $form = new AddAdminForm();
         $hydrator = new DoctrineHydrator($entityManager, '\Admin\Entity\Admin');
 

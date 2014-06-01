@@ -57,6 +57,16 @@ return array(
                     ),
                 ),
             ),
+            'schedule_export' => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route' => '/schedule/export[/from/:startDate/to/:endDate]',
+                    'defaults' => array(
+                        'controller' => __NAMESPACE__ . '\Controller\Index',
+                        'action' => 'export',
+                    ),
+                ),
+            ),
             'exceptions' => array(
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(
